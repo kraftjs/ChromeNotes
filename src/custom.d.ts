@@ -1,0 +1,1 @@
+// declare typescript type information
