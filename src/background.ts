@@ -1,11 +1,15 @@
 import { noteRecord } from './types'
 
-chrome.commands.onCommand.addListener((command) => {
-  if (command === 'view_all_notes') {
-    chrome.tabs.create({ url: chrome.runtime.getURL('display.html') });
-  } else if (command === 'create_new_note') {
-    // todo: add event listener to open new note
-  }
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.runtime.getPlatformInfo((platformInfo) => {
+    const variableKey = platformInfo.os === 'mac' ? 'Command' : 'Ctrl';
+
+    const title = `ChromeNotes shortcuts for ${platformInfo.os}:
+    ${variableKey}+Shift+F to open extension.
+    ${variableKey}+Shift+T to view all notes in new tab.`;
+
+    chrome.action.setTitle({ title });
+  });
 });
 
 chrome.tabs.onActivated.addListener((tab) => {
@@ -20,25 +24,9 @@ chrome.tabs.onUpdated.addListener((_, changeInfo, tab) => {
   }
 });
 
-chrome.runtime.onInstalled.addListener(() => updateTooltipText());
-chrome.runtime.onStartup.addListener(() => updateTooltipText());
-
-const updateTooltipText = () => {
-  chrome.runtime.getPlatformInfo((platformInfo) => {
-    const variableKey = platformInfo.os === 'mac' ? 'Command' : 'Ctrl';
-
-    const title = `ChromeNotes shortcuts for ${platformInfo.os}:
-    ${variableKey}+Shift+F to create a new note.
-    Alt+Shift+F to open extension popup.
-    Alt+Shift+P to view all notes in a new tab.`;
-
-    chrome.browserAction.setTitle({ title });
-  });
-};
-
 const updateBadgeText = (url: string) => {
   if (!isValidUrl(url)) {
-    chrome.browserAction.setBadgeText({ text: '' });
+    chrome.action.setBadgeText({ text: '' });
     return;
   }
 
@@ -55,7 +43,7 @@ const updateBadgeText = (url: string) => {
         badgeText = notesFilteredByUrl.length.toString();
       }
     }
-    chrome.browserAction.setBadgeText({ text: badgeText });
+    chrome.action.setBadgeText({ text: badgeText });
   });
 };
 

@@ -2,7 +2,7 @@
   "name": "ChromeNotes",
   "description": "Notes for Chrome!",
   "version": "0.0.1",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "icons": {
     "16": "icon16.png",
     "32": "icon32.png",
@@ -10,30 +10,21 @@
   },
   "permissions": ["storage", "tabs"],
   "background": {
-    "scripts": ["background.js"]
+    "service_worker": "background.js"
   },
-  "browser_action": {
+  "action": {
     "default_popup": "popup.html"
   },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
   "commands": {
-    "_execute_browser_action": {
-      "suggested_key": {
-        "default": "Alt+Shift+F"
-      },
-      "description": "Toggle domain-specific notes"
-    },
-    "view_all_notes": {
-      "suggested_key": {
-        "default": "Alt+Shift+P"
-      },
-      "description": "View all notes in a new tab"
-    },
-    "create_new_note": {
+    "_execute_action": {
       "suggested_key": {
         "default": "Ctrl+Shift+F",
         "mac": "Command+Shift+F"
       },
-      "description": "Create a new note"
+      "description": "Toggle domain-specific notes"
     }
   }
 }
