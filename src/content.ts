@@ -1,2 +1,2 @@
-// This file is injected as a content script
-console.log("Hello from content script!")
+// todo: delete this file but also remove mentions of it from webpack
+console.log('Hello from content script!');

@@ -1,7 +1,7 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-import App from "./App";
-import "./popup.css";
+import App from './App';
+import './popup.css';
 
-ReactDOM.render(<App />, document.getElementById("popup"));
+ReactDOM.render(<App />, document.getElementById('popup'));

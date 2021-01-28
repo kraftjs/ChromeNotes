@@ -15,7 +15,7 @@ chrome.tabs.onActivated.addListener((tab) => {
   });
 });
 
-chrome.tabs.onUpdated.addListener((_, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
   if (changeInfo.url && tab.active) {
     updateBadgeText(changeInfo.url);
   }
@@ -23,7 +23,7 @@ chrome.tabs.onUpdated.addListener((_, changeInfo, tab) => {
 
 const updateBadgeText = (url: string) => {
   console.log(url);
-  
+
   if (!isValidUrl(url)) {
     chrome.action.setBadgeText({ text: '' });
     return;

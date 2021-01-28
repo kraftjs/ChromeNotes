@@ -7,4 +7,4 @@ const isValidUrl = (url: string) => {
   return true;
 };
 
-export {isValidUrl}
+export { isValidUrl };
