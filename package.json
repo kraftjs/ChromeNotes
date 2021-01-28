@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Notes for Chrome!",
   "scripts": {
-    "build": "webpack",
-    "start": "webpack --watch"
+    "build": "webpack --mode=production",
+    "start": "webpack --watch --mode=production"
   },
   "keywords": [],
   "license": "MIT",
