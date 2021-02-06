@@ -1,14 +1,21 @@
 const webpack = require('webpack');
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const config = {
   entry: {
     popup: path.join(__dirname, 'src/popup.tsx'),
-    content: path.join(__dirname, 'src/content.ts'),
     background: path.join(__dirname, 'src/background.ts'),
   },
   output: { path: path.join(__dirname, 'dist'), filename: '[name].js' },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+      }),
+    ],
+  },
   module: {
     rules: [
       {

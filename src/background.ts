@@ -11,13 +11,16 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.tabs.onActivated.addListener((tab) => {
   chrome.tabs.get(tab.tabId, (activeTabInfo) => {
-    updateBadgeText(activeTabInfo.url || '');
+    const currentUrl = activeTabInfo.url || '';
+    updateBadgeText(currentUrl);
+    sendUrlToPopup(currentUrl);
   });
 });
 
 chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
   if (changeInfo.url && tab.active) {
     updateBadgeText(changeInfo.url);
+    sendUrlToPopup(changeInfo.url);
   }
 });
 
@@ -29,9 +32,10 @@ const updateBadgeText = (url: string) => {
     return;
   }
 
-  chrome.storage.sync.get('notes', ({ notes }: SyncStorageData) => {
+  chrome.storage.sync.get(null, (data: SyncStorageData) => {
     let badgeText = '';
-    if (notes) {
+    if (data) {
+      const notes = Object.values(data);
       const currentTabUrl = new URL(url);
       const notesFilteredByUrl = notes.filter((noteRecord: NoteRecord) => {
         const noteUrl = new URL(noteRecord.url);
@@ -44,4 +48,8 @@ const updateBadgeText = (url: string) => {
     }
     chrome.action.setBadgeText({ text: badgeText });
   });
+};
+
+const sendUrlToPopup = (url: string) => {
+  console.log('');
 };

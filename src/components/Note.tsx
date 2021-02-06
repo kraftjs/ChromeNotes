@@ -4,11 +4,12 @@ import { NoteRecord } from '../types';
 
 type NoteProps = {
   noteRecord: NoteRecord;
-  handleDelete(id: string): void;
+  handleDelete(): void;
 };
 
 const Note = ({ noteRecord, handleDelete }: NoteProps) => {
-  const { date, note, url, id } = noteRecord;
+  const { date, note, url } = noteRecord;
+
   return (
     <div>
       <p>{note}</p>
@@ -16,7 +17,7 @@ const Note = ({ noteRecord, handleDelete }: NoteProps) => {
         <p>{date}</p>
         <p>{url}</p>
       </div>
-      <button onClick={() => handleDelete(id)}></button>
+      <button onClick={handleDelete}>Delete note</button>
     </div>
   );
 };
