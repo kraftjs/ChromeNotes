@@ -9,35 +9,48 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+chrome.runtime.onMessage.addListener((message) => {
+  if (message === 'noteChange') {
+    chrome.tabs.query(
+      { active: true, windowId: chrome.windows.WINDOW_ID_CURRENT },
+      (tabs) => {
+        updateBadgeText(tabs[0].url || '');
+      },
+    );
+  }
+});
+
 chrome.tabs.onActivated.addListener((tab) => {
   chrome.tabs.get(tab.tabId, (activeTabInfo) => {
     const currentUrl = activeTabInfo.url || '';
     updateBadgeText(currentUrl);
-    sendUrlToPopup(currentUrl);
+    signalUrlUpdate();
   });
 });
 
 chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
   if (changeInfo.url && tab.active) {
     updateBadgeText(changeInfo.url);
-    sendUrlToPopup(changeInfo.url);
+    signalUrlUpdate();
   }
 });
 
 const updateBadgeText = (url: string) => {
-  console.log(url);
-
   if (!isValidUrl(url)) {
     chrome.action.setBadgeText({ text: '' });
     return;
   }
 
   chrome.storage.sync.get(null, (data: SyncStorageData) => {
+    console.log(data);
     let badgeText = '';
     if (data) {
       const notes = Object.values(data);
       const currentTabUrl = new URL(url);
       const notesFilteredByUrl = notes.filter((noteRecord: NoteRecord) => {
+        if (!noteRecord.url) {
+          return false;
+        }
         const noteUrl = new URL(noteRecord.url);
         return noteUrl.hostname === currentTabUrl.hostname;
       });
@@ -50,6 +63,6 @@ const updateBadgeText = (url: string) => {
   });
 };
 
-const sendUrlToPopup = (url: string) => {
-  console.log('');
+const signalUrlUpdate = () => {
+  chrome.runtime.sendMessage('updateURL');
 };

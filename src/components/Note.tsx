@@ -10,12 +10,28 @@ type NoteProps = {
 const Note = ({ noteRecord, handleDelete }: NoteProps) => {
   const { date, note, url } = noteRecord;
 
+  let urlDisplay: string | React.ReactElement<HTMLAnchorElement>;
+  if (url.startsWith('chrome:')) {
+    urlDisplay = url;
+  } else if (url) {
+    urlDisplay = (
+      <a href={url} target='_newtab'>
+        {url}
+      </a>
+    );
+    document.querySelector('a')?.addEventListener('click', () => {
+      chrome.tabs.create({ url });
+    });
+  } else {
+    urlDisplay = 'No url';
+  }
+
   return (
     <div>
       <p>{note}</p>
       <div>
         <p>{date}</p>
-        <p>{url}</p>
+        <p>{urlDisplay}</p>
       </div>
       <button onClick={handleDelete}>Delete note</button>
     </div>
