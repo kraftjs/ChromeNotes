@@ -42,7 +42,6 @@ const updateBadgeText = (url: string) => {
   }
 
   chrome.storage.sync.get(null, (data: SyncStorageData) => {
-    console.log(data);
     let badgeText = '';
     if (data) {
       const notes = Object.values(data);

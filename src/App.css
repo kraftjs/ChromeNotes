@@ -4,9 +4,12 @@
 
 body {
   height: 570px;
-  width: 760px;
+  width: 450px;
+  position: relative;
 }
 
 h1 {
   text-align: center;
+  margin: 0 0 15px 0;
+  padding: 10px 0 0 0;
 }

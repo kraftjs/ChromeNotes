@@ -2,20 +2,39 @@ import * as React from 'react';
 
 import './NoteForm.css';
 
+const { useEffect } = React;
+
 type NoteFormProps = {
   text: string;
   handleChange(e: React.ChangeEvent<HTMLTextAreaElement>): void;
   handleSubmit(e: React.FormEvent<HTMLFormElement>): void;
-  url: string;
+  handleCancel(e: React.MouseEvent<HTMLButtonElement>): void;
 };
 
-const NoteForm = ({ text, handleChange, handleSubmit, url }: NoteFormProps) => {
+const NoteForm = ({
+  text,
+  handleChange,
+  handleSubmit,
+  handleCancel,
+}: NoteFormProps) => {
+  useEffect(() => {
+    document.querySelector('textarea')?.focus;
+  }, []);
+
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor='note'>
-        <textarea id='note' value={text} onChange={handleChange} />
+    <form id='noteForm' onSubmit={handleSubmit}>
+      <label htmlFor='noteTextArea'>
+        <textarea
+          id='noteTextArea'
+          value={text}
+          onChange={handleChange}
+          maxLength={4000}
+        />
       </label>
       <button type='submit'>Save note</button>
+      <button type='reset' onClick={handleCancel}>
+        Cancel
+      </button>
     </form>
   );
 };

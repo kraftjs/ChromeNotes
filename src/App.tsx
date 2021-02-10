@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 
 import Heading from './components/Heading';
+import NoteCount from './components/NoteCount';
 import NoteForm from './components/NoteForm';
 import Notes from './components/Notes';
 
@@ -12,9 +13,10 @@ import { isValidUrl } from './utils';
 const { useEffect, useState } = React;
 
 const App = () => {
-  const [text, setText] = useState('');
-  const [url, setUrl] = useState('');
   const [showAll, setShowAll] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [url, setUrl] = useState('');
+  const [text, setText] = useState('');
   const [notes, setNotes] = useState<NoteInfo[]>([]);
   const [notesToShow, setNotesToShow] = useState<NoteInfo[]>([]);
 
@@ -45,7 +47,6 @@ const App = () => {
         return noteUrl.hostname === tabUrl.hostname;
       });
     }
-
     setNotesToShow(filteredNotes);
   }, [notes, showAll, url]);
 
@@ -60,6 +61,22 @@ const App = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (text.length === 0 || text.replace(/\s/g, '').length === 0) {
+      setText('');
+      const textarea = (e.target as HTMLFormElement).querySelector('textarea');
+      textarea?.classList.add('invalidInput');
+      textarea?.setAttribute('placeholder', 'The form is blank');
+      textarea?.addEventListener(
+        'focus',
+        () => {
+          textarea?.classList.remove('invalidInput');
+          textarea?.removeAttribute('placeholder');
+        },
+        { once: true },
+      );
+      return;
+    }
+
     const noteUrl = isValidUrl(url) ? url : '';
     const newNoteRecord: NoteRecord = {
       date: new Date().toJSON(),
@@ -70,8 +87,9 @@ const App = () => {
     const uuid = uuidv4();
     chrome.storage.sync.set({ [uuid]: newNoteRecord }, () => {
       const noteInfo: NoteInfo = [uuid, newNoteRecord];
-      setText('');
       setNotes([noteInfo, ...notes]);
+      setShowForm(false);
+      setText('');
     });
   };
 
@@ -80,6 +98,22 @@ const App = () => {
       const filteredNotes = notes.filter(([id]) => id !== uuid);
       setNotes(filteredNotes);
     });
+  };
+
+  const handleFilterNotes = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShowAll(!showAll);
+  };
+
+  const handleShowNoteForm = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShowForm(true);
+  };
+
+  const handleCancelNote = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShowForm(false);
+    setText('');
   };
 
   const updateUrl = () => {
@@ -91,17 +125,26 @@ const App = () => {
     );
   };
 
-  // TODO: implement logic to display different elements as primary
   return (
     <React.Fragment>
       <Heading />
-      <NoteForm
-        text={text}
-        handleChange={handleTextChange}
-        handleSubmit={handleSubmit}
-        url={url}
-      />
-      <Notes notes={notesToShow} handleDelete={handleDelete} />
+      {showForm ? (
+        <NoteForm
+          text={text}
+          handleChange={handleTextChange}
+          handleSubmit={handleSubmit}
+          handleCancel={handleCancelNote}
+        />
+      ) : (
+        <Notes
+          notes={notesToShow}
+          handleDelete={handleDelete}
+          handleShowFormClick={handleShowNoteForm}
+          handleFilterClick={handleFilterNotes}
+          isFiltered={!showAll}
+        />
+      )}
+      <NoteCount noteCount={notes.length} />
     </React.Fragment>
   );
 };

@@ -3,7 +3,11 @@ import * as React from 'react';
 type HeadingProps = {};
 
 const Heading = ({}: HeadingProps) => {
-  return <h1>Welcome to ChromeNotes</h1>;
+  return (
+    <header>
+      <h1>ChromeNotes</h1>
+    </header>
+  );
 };
 
 export default Heading;
