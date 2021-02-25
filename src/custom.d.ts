@@ -1,3 +1,14 @@
+declare module '*.svg' {
+  const content: any;
+  export default content;
+}
+
+/**
+ * ---
+ * NOTE: Below are types for Chrome Manifest v3 that are not yet merged with DefinitelyTyped, notably chrome.action API
+ * ---
+ **/
+
 /**
  * NOTE: Included this custom types documentation for chrome.action api, which was updated
  * in manifest v3 for chrome extensions. It has not yet been accepted by the DefinitelyTyped

@@ -1,0 +1,10 @@
+TODO:
+  - include asterisk tooltip that explains limits of sync storage
+  - format Notes to scroll when there are too many
+  - limit amount of characters each note displays unless clicked
+  - add state management to undo note deletions
+  - if there are no notes, "Your _____ is empty" "There's nothing here"
+  - include crumb breakdowns so user can see more specified content
+        e.g. reddit.com (5) -> ... -> webdev (1)
+        e.g. site(10) -> ... -> mens-style (1)
+        e.g. nytimes.com (10) -> tech (3) -> ... -> current (1)

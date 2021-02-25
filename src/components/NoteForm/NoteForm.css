@@ -1,0 +1,47 @@
+form {
+  box-sizing: border-box;
+  border: solid #c2c2d6 2px;
+  height: 75%;
+}
+
+textarea {
+  box-sizing: border-box;
+  resize: none;
+  width: 100%;
+  height: 100%;
+  padding: 2%;
+  outline: none;
+  border: solid #c2c2d6 1px;
+  border-radius: 4px;
+}
+
+textarea.invalidInput {
+  outline: solid red 2px;
+}
+
+#charCount {
+  display: inline-block;
+  text-align: right;
+  width: 100%;
+}
+
+#charCount > img {
+  display: inline-block;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+#charCount > strong {
+  display: inline-block;
+  text-align: right;
+  width: 4ch;
+}
+
+#charCount.warning > img {
+  visibility: visible;
+}
+
+#charCount.warning > strong {
+  color: red;
+  font-weight: bolder;
+}

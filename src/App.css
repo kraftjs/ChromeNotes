@@ -1,5 +1,7 @@
 #popup {
   font-style: normal;
+  height: 100%;
+  width: 100%;
 }
 
 body {

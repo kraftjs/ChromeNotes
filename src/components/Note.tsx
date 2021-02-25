@@ -27,14 +27,16 @@ const Note = ({ noteRecord, handleDelete }: NoteProps) => {
   }
 
   return (
-    <article>
-      <p>{note}</p>
-      <footer>
-        <time dateTime={date}>{new Date(date).toLocaleString()}</time>
-        <span>{urlDisplay}</span>
-      </footer>
-      <button onClick={handleDelete}>Delete note</button>
-    </article>
+    <li>
+      <article>
+        <p>{note}</p>
+        <footer>
+          <time dateTime={date}>{new Date(date).toLocaleString()}</time>
+          <span>{urlDisplay}</span>
+        </footer>
+        <button onClick={handleDelete}>Delete note</button>
+      </article>
+    </li>
   );
 };
 

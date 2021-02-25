@@ -40,15 +40,15 @@ const Notes = ({
   };
 
   const createNotesElement = (notes: NoteInfo[]) => {
-    return notes.map(([uuid, noteRecord]) => {
-      return (
-        <Note
-          key={uuid}
-          noteRecord={noteRecord}
-          handleDelete={() => handleDelete(uuid)}
-        />
-      );
-    });
+    const notesElement = notes.map(([uuid, noteRecord]) => (
+      <Note
+        key={uuid}
+        noteRecord={noteRecord}
+        handleDelete={() => handleDelete(uuid)}
+      />
+    ));
+
+    return <ul>{notesElement}</ul>;
   };
 
   return (

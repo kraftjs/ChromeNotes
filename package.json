@@ -20,6 +20,7 @@
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^6.2.1",
     "css-loader": "^5.0.0",
+    "file-loader": "^6.2.0",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^8.0.5",
@@ -30,6 +31,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "normalize.css": "^8.0.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-hot-loader": "^4.13.0",

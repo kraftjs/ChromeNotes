@@ -20,6 +20,8 @@ const App = () => {
   const [notes, setNotes] = useState<NoteInfo[]>([]);
   const [notesToShow, setNotesToShow] = useState<NoteInfo[]>([]);
 
+  const FORM_CHAR_LIMIT = 4000;
+
   chrome.runtime.onMessage.addListener((message: string) => {
     console.log(message);
     if (message === 'updateURL') {
@@ -54,14 +56,12 @@ const App = () => {
     chrome.runtime.sendMessage('noteChange');
   }, [notes]);
 
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (text.length === 0 || text.replace(/\s/g, '').length === 0) {
+    if (text.length > FORM_CHAR_LIMIT) {
+      return;
+    } else if (text.length === 0 || text.replace(/\s/g, '').length === 0) {
       setText('');
       const textarea = (e.target as HTMLFormElement).querySelector('textarea');
       textarea?.classList.add('invalidInput');
@@ -131,9 +131,10 @@ const App = () => {
       {showForm ? (
         <NoteForm
           text={text}
-          handleChange={handleTextChange}
+          handleChange={(e) => setText(e.target.value)}
           handleSubmit={handleSubmit}
           handleCancel={handleCancelNote}
+          characterLimit={FORM_CHAR_LIMIT}
         />
       ) : (
         <Notes
