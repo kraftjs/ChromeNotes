@@ -1,5 +1,4 @@
-import { NoteRecord, SyncStorageData } from './types';
-import { isValidUrl } from './utils';
+import { NoteRecord, SyncStorageData, EventMessages } from './types';
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.runtime.getPlatformInfo((platformInfo) => {
@@ -10,7 +9,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.runtime.onMessage.addListener((message) => {
-  if (message === 'noteChange') {
+  if (message === EventMessages.NoteChange) {
     chrome.tabs.query(
       { active: true, windowId: chrome.windows.WINDOW_ID_CURRENT },
       (tabs) => {
@@ -24,18 +23,18 @@ chrome.tabs.onActivated.addListener((tab) => {
   chrome.tabs.get(tab.tabId, (activeTabInfo) => {
     const currentUrl = activeTabInfo.url || '';
     updateBadgeText(currentUrl);
-    signalUrlUpdate();
+    chrome.runtime.sendMessage(EventMessages.UpdateUrl);
   });
 });
 
 chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
   if (changeInfo.url && tab.active) {
     updateBadgeText(changeInfo.url);
-    signalUrlUpdate();
+    chrome.runtime.sendMessage(EventMessages.UpdateUrl);
   }
 });
 
-const updateBadgeText = (url: string) => {
+function updateBadgeText(url: string) {
   if (!isValidUrl(url)) {
     chrome.action.setBadgeText({ text: '' });
     return;
@@ -60,8 +59,13 @@ const updateBadgeText = (url: string) => {
     }
     chrome.action.setBadgeText({ text: badgeText });
   });
-};
+}
 
-const signalUrlUpdate = () => {
-  chrome.runtime.sendMessage('updateURL');
-};
+function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+  } catch (error) {
+    return false;
+  }
+  return true;
+}

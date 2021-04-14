@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 
 type HeadingProps = {};
 
-const Heading = ({}: HeadingProps) => {
+const Heading: React.FC<HeadingProps> = ({}) => {
   return (
     <header>
       <h1>ChromeNotes</h1>

@@ -1,13 +1,12 @@
-import * as React from 'react';
-
-import { NoteRecord } from '../types';
+import React from 'react';
+import { NoteRecord } from '../../types';
 
 type NoteProps = {
   noteRecord: NoteRecord;
   handleDelete(): void;
 };
 
-const Note = ({ noteRecord, handleDelete }: NoteProps) => {
+const Note: React.FC<NoteProps> = ({ noteRecord, handleDelete }) => {
   const { date, note, url } = noteRecord;
 
   let urlDisplay: string | React.ReactElement<HTMLAnchorElement>;

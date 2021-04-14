@@ -1,18 +1,16 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { NoteInfo, NoteRecord, SyncStorageData, EventMessages } from '../types';
+import Heading from './Heading';
+import NoteCount from './NoteCount';
+import NoteForm from './NoteForm';
+import NotesPanel from './NotesPanel';
+
 import './App.css';
 
-import Heading from './components/Heading';
-import NoteCount from './components/NoteCount';
-import NoteForm from './components/NoteForm';
-import Notes from './components/Notes';
+const FORM_CHAR_LIMIT = 4000;
 
-import { NoteRecord, NoteInfo, SyncStorageData } from './types';
-import { isValidUrl } from './utils';
-
-const { useEffect, useState } = React;
-
-const App = () => {
+const App: React.FC = () => {
   const [showAll, setShowAll] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [url, setUrl] = useState('');
@@ -20,12 +18,15 @@ const App = () => {
   const [notes, setNotes] = useState<NoteInfo[]>([]);
   const [notesToShow, setNotesToShow] = useState<NoteInfo[]>([]);
 
-  const FORM_CHAR_LIMIT = 4000;
-
   chrome.runtime.onMessage.addListener((message: string) => {
     console.log(message);
-    if (message === 'updateURL') {
-      updateUrl();
+    if (message === EventMessages.UpdateUrl) {
+      chrome.tabs.query(
+        { active: true, windowId: chrome.windows.WINDOW_ID_CURRENT },
+        (tabs) => {
+          setUrl(tabs[0].url || '');
+        },
+      );
     }
   });
 
@@ -34,11 +35,17 @@ const App = () => {
       const notes: NoteInfo[] = Object.entries(data);
       setNotes(notes);
     });
-    updateUrl();
+
+    chrome.tabs.query(
+      { active: true, windowId: chrome.windows.WINDOW_ID_CURRENT },
+      (tabs) => {
+        setUrl(tabs[0].url || '');
+      },
+    );
   }, []);
 
   useEffect(() => {
-    let filteredNotes = notes;
+    let filteredNotes = [...notes];
     if (!showAll && isValidUrl(url)) {
       filteredNotes = notes.filter(([, noteRecord]) => {
         if (!noteRecord.url) {
@@ -53,10 +60,10 @@ const App = () => {
   }, [notes, showAll, url]);
 
   useEffect(() => {
-    chrome.runtime.sendMessage('noteChange');
+    chrome.runtime.sendMessage(EventMessages.NoteChange);
   }, [notes]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (text.length > FORM_CHAR_LIMIT) {
@@ -79,7 +86,7 @@ const App = () => {
 
     const noteUrl = isValidUrl(url) ? url : '';
     const newNoteRecord: NoteRecord = {
-      date: new Date().toJSON(),
+      date: new Date().toLocaleString(),
       note: text,
       url: noteUrl,
     };
@@ -91,39 +98,30 @@ const App = () => {
       setShowForm(false);
       setText('');
     });
-  };
+  }
 
-  const handleDelete = (uuid: string) => {
+  function handleDelete(uuid: string) {
     chrome.storage.sync.remove(uuid, () => {
       const filteredNotes = notes.filter(([id]) => id !== uuid);
       setNotes(filteredNotes);
     });
-  };
+  }
 
-  const handleFilterNotes = (e: React.MouseEvent<HTMLButtonElement>) => {
+  function handleFilterNotes(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setShowAll(!showAll);
-  };
+  }
 
-  const handleShowNoteForm = (e: React.MouseEvent<HTMLButtonElement>) => {
+  function handleShowNoteForm(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setShowForm(true);
-  };
+  }
 
-  const handleCancelNote = (e: React.MouseEvent<HTMLButtonElement>) => {
+  function handleCancelNote(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setShowForm(false);
     setText('');
-  };
-
-  const updateUrl = () => {
-    chrome.tabs.query(
-      { active: true, windowId: chrome.windows.WINDOW_ID_CURRENT },
-      (tabs) => {
-        setUrl(tabs[0].url || '');
-      },
-    );
-  };
+  }
 
   return (
     <React.Fragment>
@@ -137,7 +135,7 @@ const App = () => {
           characterLimit={FORM_CHAR_LIMIT}
         />
       ) : (
-        <Notes
+        <NotesPanel
           notes={notesToShow}
           handleDelete={handleDelete}
           handleShowFormClick={handleShowNoteForm}
@@ -149,5 +147,14 @@ const App = () => {
     </React.Fragment>
   );
 };
+
+function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+  } catch (error) {
+    return false;
+  }
+  return true;
+}
 
 export default App;

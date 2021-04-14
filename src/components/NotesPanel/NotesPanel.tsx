@@ -1,45 +1,42 @@
-import * as React from 'react';
-
-import { NoteInfo } from '../types';
+import React, { useEffect, useState } from 'react';
+import { NoteInfo, UUID } from '../../types';
 import Note from './Note';
 
-import './Notes.css';
+import './NotesPanel.css';
 
-const { useEffect, useState } = React;
-
-type NotesProps = {
+type NotesPanelProps = {
   notes: NoteInfo[];
-  handleDelete(uuid: string): void;
+  handleDelete(uuid: UUID): void;
   handleShowFormClick(e: React.MouseEvent<HTMLButtonElement>): void;
   handleFilterClick(e: React.MouseEvent<HTMLButtonElement>): void;
   isFiltered: boolean;
 };
 
-const Notes = ({
+const NotesPanel: React.FC<NotesPanelProps> = ({
   notes,
   handleDelete,
   handleShowFormClick,
   handleFilterClick,
   isFiltered,
-}: NotesProps) => {
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredNotes, setFilteredNotes] = useState<NoteInfo[]>([]);
 
   useEffect(() => {
     console.log('searchQuery:', searchQuery);
     console.log('notes:', notes);
-    const newFilteredNotes = notes.filter(([uuid, noteRecord]) => {
+    const newFilteredNotes = notes.filter(([_uuid, noteRecord]) => {
       return noteRecord.url.includes(searchQuery);
     });
     setFilteredNotes(newFilteredNotes);
   }, [searchQuery, notes]);
 
-  const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleQueryChange(e: React.ChangeEvent<HTMLInputElement>) {
     const normalizedQuery = e.target.value.trim().toLowerCase();
     setSearchQuery(normalizedQuery);
-  };
+  }
 
-  const createNotesElement = (notes: NoteInfo[]) => {
+  function createNotesElement(notes: NoteInfo[]) {
     const notesElement = notes.map(([uuid, noteRecord]) => (
       <Note
         key={uuid}
@@ -49,7 +46,7 @@ const Notes = ({
     ));
 
     return <ul>{notesElement}</ul>;
-  };
+  }
 
   return (
     <section id='notesDisplay'>
@@ -84,4 +81,4 @@ const Notes = ({
   );
 };
 
-export default Notes;
+export default NotesPanel;
