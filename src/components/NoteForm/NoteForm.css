@@ -18,30 +18,3 @@ textarea {
 textarea.invalidInput {
   outline: solid red 2px;
 }
-
-#charCount {
-  display: inline-block;
-  text-align: right;
-  width: 100%;
-}
-
-#charCount > img {
-  display: inline-block;
-  vertical-align: middle;
-  visibility: hidden;
-}
-
-#charCount > strong {
-  display: inline-block;
-  text-align: right;
-  width: 4ch;
-}
-
-#charCount.warning > img {
-  visibility: visible;
-}
-
-#charCount.warning > strong {
-  color: red;
-  font-weight: bolder;
-}

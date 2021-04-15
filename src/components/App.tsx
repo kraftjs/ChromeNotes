@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { NoteInfo, NoteRecord, SyncStorageData, EventMessages } from '../types';
+import { NoteInfo, NoteRecord, SyncStorageData, EventMessages, UUID } from '../types';
 import Heading from './Heading';
 import NoteCount from './NoteCount';
 import NoteForm from './NoteForm';
@@ -8,14 +8,13 @@ import NotesPanel from './NotesPanel';
 
 import './App.css';
 
-const FORM_CHAR_LIMIT = 4000;
+const NOTE_CHAR_LIMIT = 4000;
 
 const App: React.FC = () => {
-  const [showAll, setShowAll] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [url, setUrl] = useState('');
-  const [text, setText] = useState('');
   const [notes, setNotes] = useState<NoteInfo[]>([]);
+  const [url, setUrl] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [showAllNotes, setShowAllNotes] = useState(false);
   const [notesToShow, setNotesToShow] = useState<NoteInfo[]>([]);
 
   chrome.runtime.onMessage.addListener((message: string) => {
@@ -46,7 +45,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     let filteredNotes = [...notes];
-    if (!showAll && isValidUrl(url)) {
+    if (!showAllNotes && isValidUrl(url)) {
       filteredNotes = notes.filter(([, noteRecord]) => {
         if (!noteRecord.url) {
           return false;
@@ -57,33 +56,15 @@ const App: React.FC = () => {
       });
     }
     setNotesToShow(filteredNotes);
-  }, [notes, showAll, url]);
+  }, [notes, showAllNotes, url]);
 
   useEffect(() => {
     chrome.runtime.sendMessage(EventMessages.NoteChange);
   }, [notes]);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    if (text.length > FORM_CHAR_LIMIT) {
-      return;
-    } else if (text.length === 0 || text.replace(/\s/g, '').length === 0) {
-      setText('');
-      const textarea = (e.target as HTMLFormElement).querySelector('textarea');
-      textarea?.classList.add('invalidInput');
-      textarea?.setAttribute('placeholder', 'The form is blank');
-      textarea?.addEventListener(
-        'focus',
-        () => {
-          textarea?.classList.remove('invalidInput');
-          textarea?.removeAttribute('placeholder');
-        },
-        { once: true },
-      );
-      return;
-    }
-
+  // TODO: double check this, as well as fix types
+  function addNote(text: string) {
+    const uuid: UUID = uuidv4();
     const noteUrl = isValidUrl(url) ? url : '';
     const newNoteRecord: NoteRecord = {
       date: new Date().toLocaleString(),
@@ -91,25 +72,24 @@ const App: React.FC = () => {
       url: noteUrl,
     };
 
-    const uuid = uuidv4();
     chrome.storage.sync.set({ [uuid]: newNoteRecord }, () => {
       const noteInfo: NoteInfo = [uuid, newNoteRecord];
       setNotes([noteInfo, ...notes]);
       setShowForm(false);
-      setText('');
     });
   }
 
-  function handleDelete(uuid: string) {
+  function deleteNote(uuid: string) {
     chrome.storage.sync.remove(uuid, () => {
       const filteredNotes = notes.filter(([id]) => id !== uuid);
       setNotes(filteredNotes);
     });
   }
 
+  // TODO: Might not need preventDefault -- then we can inline this function
   function handleFilterNotes(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    setShowAll(!showAll);
+    setShowAllNotes(!showAllNotes);
   }
 
   function handleShowNoteForm(e: React.MouseEvent<HTMLButtonElement>) {
@@ -117,30 +97,23 @@ const App: React.FC = () => {
     setShowForm(true);
   }
 
-  function handleCancelNote(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    setShowForm(false);
-    setText('');
-  }
-
+  // TODO: Might not need preventDefault -- then we can inline this function
   return (
     <React.Fragment>
       <Heading />
       {showForm ? (
         <NoteForm
-          text={text}
-          handleChange={(e) => setText(e.target.value)}
-          handleSubmit={handleSubmit}
-          handleCancel={handleCancelNote}
-          characterLimit={FORM_CHAR_LIMIT}
+          FORM_CHAR_LIMIT={NOTE_CHAR_LIMIT}
+          onAddNote={addNote}
+          onCancelNote={() => setShowForm(false)}
         />
       ) : (
         <NotesPanel
           notes={notesToShow}
-          handleDelete={handleDelete}
+          onDeleteNote={deleteNote}
           handleShowFormClick={handleShowNoteForm}
           handleFilterClick={handleFilterNotes}
-          isFiltered={!showAll}
+          isFiltered={!showAllNotes}
         />
       )}
       <NoteCount noteCount={notes.length} />

@@ -6,15 +6,15 @@ import './NotesPanel.css';
 
 type NotesPanelProps = {
   notes: NoteInfo[];
-  handleDelete(uuid: UUID): void;
-  handleShowFormClick(e: React.MouseEvent<HTMLButtonElement>): void;
-  handleFilterClick(e: React.MouseEvent<HTMLButtonElement>): void;
+  onDeleteNote: (uuid: UUID) => void;
+  handleShowFormClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleFilterClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   isFiltered: boolean;
 };
 
 const NotesPanel: React.FC<NotesPanelProps> = ({
   notes,
-  handleDelete,
+  onDeleteNote,
   handleShowFormClick,
   handleFilterClick,
   isFiltered,
@@ -41,7 +41,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
       <Note
         key={uuid}
         noteRecord={noteRecord}
-        handleDelete={() => handleDelete(uuid)}
+        handleDeleteNote={() => onDeleteNote(uuid)}
       />
     ));
 

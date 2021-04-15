@@ -1,60 +1,60 @@
-import React, { useEffect } from 'react';
-import alert from './alert.svg';
+import React, {
+  ChangeEvent,
+  FormEvent,
+  MouseEvent,
+  useEffect,
+  useState,
+} from 'react';
+import FormCharacterCount from '../FormCharacterCount';
 
 import './NoteForm.css';
 
 type NoteFormProps = {
-  text: string;
-  handleChange(e: React.ChangeEvent<HTMLTextAreaElement>): void;
-  handleSubmit(e: React.FormEvent<HTMLFormElement>): void;
-  handleCancel(e: React.MouseEvent<HTMLButtonElement>): void;
-  characterLimit: number;
+  FORM_CHAR_LIMIT: number;
+  onAddNote: (text: string) => void;
+  onCancelNote: () => void;
 };
 
 const NoteForm: React.FC<NoteFormProps> = ({
-  text,
-  handleChange,
-  handleSubmit,
-  handleCancel,
-  characterLimit,
+  FORM_CHAR_LIMIT,
+  onAddNote,
+  onCancelNote,
 }) => {
-  const FORM_CHAR_LIMIT = characterLimit;
+  const [text, setText] = useState('');
+  const isValid: boolean =
+    text.length <= FORM_CHAR_LIMIT && text.replace(/\s/g, '').length > 0;
 
   useEffect(() => {
     document.querySelector<HTMLTextAreaElement>('textarea')?.focus();
   }, []);
 
-  useEffect(() => {
-    const charCountDisplay = document.querySelector<HTMLSpanElement>(
-      '#charCount',
-    );
-    const textarea = document.querySelector<HTMLTextAreaElement>('textarea');
-    if (text.length <= FORM_CHAR_LIMIT) {
-      charCountDisplay?.classList.remove('warning');
-      textarea?.classList.remove('invalidInput');
-    } else {
-      charCountDisplay?.classList.add('warning');
-      textarea?.classList.add('invalidInput');
-    }
-  }, [text]);
+  function handleInputChange({ target }: ChangeEvent<HTMLTextAreaElement>) {
+    setText(target.value);
+  }
+
+  function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    onAddNote(text);
+    setText('');
+  }
+
+  function handleCancelNote(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    onCancelNote();
+    setText('');
+  }
 
   return (
-    <form id='noteForm' onSubmit={handleSubmit}>
+    <form id='noteForm' onSubmit={handleFormSubmit}>
       <label htmlFor='noteTextArea'>
-        <textarea id='noteTextArea' value={text} onChange={handleChange} />
-        <span id='charCount'>
-          <img
-            src={alert}
-            alt='alert: too many characters'
-            width='20'
-            height='20'
-          />
-          <strong>{text.length}</strong>/{FORM_CHAR_LIMIT}
-        </span>
+        <textarea id='noteTextArea' value={text} onChange={handleInputChange} />
+        <FormCharacterCount FORM_CHAR_LIMIT={FORM_CHAR_LIMIT} text={text} />
       </label>
       <footer>
-        <button type='submit'>Save note</button>
-        <button type='reset' onClick={handleCancel}>
+        <button type='submit' disabled={!isValid}>
+          Save note
+        </button>
+        <button type='reset' onClick={handleCancelNote}>
           Cancel
         </button>
       </footer>

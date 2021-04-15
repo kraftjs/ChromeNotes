@@ -3,10 +3,10 @@ import { NoteRecord } from '../../types';
 
 type NoteProps = {
   noteRecord: NoteRecord;
-  handleDelete(): void;
+  handleDeleteNote: () => void;
 };
 
-const Note: React.FC<NoteProps> = ({ noteRecord, handleDelete }) => {
+const Note: React.FC<NoteProps> = ({ noteRecord, handleDeleteNote }) => {
   const { date, note, url } = noteRecord;
 
   let urlDisplay: string | React.ReactElement<HTMLAnchorElement>;
@@ -33,7 +33,7 @@ const Note: React.FC<NoteProps> = ({ noteRecord, handleDelete }) => {
           <time dateTime={date}>{new Date(date).toLocaleString()}</time>
           <span>{urlDisplay}</span>
         </footer>
-        <button onClick={handleDelete}>Delete note</button>
+        <button onClick={handleDeleteNote}>Delete note</button>
       </article>
     </li>
   );
