@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoteRecord } from '../../types';
+import { NoteRecord } from '../../lib/types';
 
 type NoteProps = {
   noteRecord: NoteRecord;

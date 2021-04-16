@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { NoteInfo, NoteRecord, SyncStorageData, EventMessages, UUID } from '../types';
+import { NoteInfo, NoteRecord, SyncStorageData, EventMessages, UUID } from '../lib/types';
+import isValidUrl from '../lib/url-validator';
 import Heading from './Heading';
 import NoteCount from './NoteCount';
 import NoteForm from './NoteForm';
@@ -14,8 +15,6 @@ const App: React.FC = () => {
   const [notes, setNotes] = useState<NoteInfo[]>([]);
   const [url, setUrl] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [showAllNotes, setShowAllNotes] = useState(false);
-  const [notesToShow, setNotesToShow] = useState<NoteInfo[]>([]);
 
   chrome.runtime.onMessage.addListener((message: string) => {
     console.log(message);
@@ -44,26 +43,10 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    let filteredNotes = [...notes];
-    if (!showAllNotes && isValidUrl(url)) {
-      filteredNotes = notes.filter(([, noteRecord]) => {
-        if (!noteRecord.url) {
-          return false;
-        }
-        const tabUrl = new URL(url);
-        const noteUrl = new URL(noteRecord.url);
-        return noteUrl.hostname === tabUrl.hostname;
-      });
-    }
-    setNotesToShow(filteredNotes);
-  }, [notes, showAllNotes, url]);
-
-  useEffect(() => {
     chrome.runtime.sendMessage(EventMessages.NoteChange);
   }, [notes]);
 
-  // TODO: double check this, as well as fix types
-  function addNote(text: string) {
+  function saveNote(text: string) {
     const uuid: UUID = uuidv4();
     const noteUrl = isValidUrl(url) ? url : '';
     const newNoteRecord: NoteRecord = {
@@ -79,55 +62,33 @@ const App: React.FC = () => {
     });
   }
 
-  function deleteNote(uuid: string) {
+  function deleteNote(uuid: UUID) {
     chrome.storage.sync.remove(uuid, () => {
       const filteredNotes = notes.filter(([id]) => id !== uuid);
       setNotes(filteredNotes);
     });
   }
 
-  // TODO: Might not need preventDefault -- then we can inline this function
-  function handleFilterNotes(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    setShowAllNotes(!showAllNotes);
-  }
-
-  function handleShowNoteForm(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    setShowForm(true);
-  }
-
-  // TODO: Might not need preventDefault -- then we can inline this function
   return (
     <React.Fragment>
       <Heading />
       {showForm ? (
         <NoteForm
           FORM_CHAR_LIMIT={NOTE_CHAR_LIMIT}
-          onAddNote={addNote}
+          onSaveNote={saveNote}
           onCancelNote={() => setShowForm(false)}
         />
       ) : (
         <NotesPanel
-          notes={notesToShow}
+          notes={notes}
+          url={url}
           onDeleteNote={deleteNote}
-          handleShowFormClick={handleShowNoteForm}
-          handleFilterClick={handleFilterNotes}
-          isFiltered={!showAllNotes}
+          onDraftNewNote={() => setShowForm(true)}
         />
       )}
       <NoteCount noteCount={notes.length} />
     </React.Fragment>
   );
 };
-
-function isValidUrl(url: string): boolean {
-  try {
-    new URL(url);
-  } catch (error) {
-    return false;
-  }
-  return true;
-}
 
 export default App;

@@ -1,4 +1,5 @@
-import { NoteRecord, SyncStorageData, EventMessages } from './types';
+import { NoteRecord, SyncStorageData, EventMessages } from './lib/types';
+import isValidUrl from './lib/url-validator';
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.runtime.getPlatformInfo((platformInfo) => {
@@ -59,13 +60,4 @@ function updateBadgeText(url: string) {
     }
     chrome.action.setBadgeText({ text: badgeText });
   });
-}
-
-function isValidUrl(url: string): boolean {
-  try {
-    new URL(url);
-  } catch (error) {
-    return false;
-  }
-  return true;
 }

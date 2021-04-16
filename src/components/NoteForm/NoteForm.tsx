@@ -11,13 +11,13 @@ import './NoteForm.css';
 
 type NoteFormProps = {
   FORM_CHAR_LIMIT: number;
-  onAddNote: (text: string) => void;
+  onSaveNote: (text: string) => void;
   onCancelNote: () => void;
 };
 
 const NoteForm: React.FC<NoteFormProps> = ({
   FORM_CHAR_LIMIT,
-  onAddNote,
+  onSaveNote,
   onCancelNote,
 }) => {
   const [text, setText] = useState('');
@@ -34,7 +34,7 @@ const NoteForm: React.FC<NoteFormProps> = ({
 
   function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    onAddNote(text);
+    onSaveNote(text);
     setText('');
   }
 
