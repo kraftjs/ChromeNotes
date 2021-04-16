@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NoteRecord, UUID } from '../../lib/types';
 import isValidUrl from '../../lib/url-validator';
-import Note from './Note';
+import NotesList from '../Notes';
 
 import './NotesPanel.css';
 
@@ -43,19 +43,6 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
     setSearchQuery(normalizedQuery);
   }
 
-  // TODO: Make a NotesList components
-  function createNotesElement(notes: NoteRecord[]) {
-    const notesElement = notes.map(({ uuid, note }) => (
-      <Note
-        key={uuid}
-        note={note}
-        handleDeleteNote={() => onDeleteNote(uuid)}
-      />
-    ));
-
-    return <ul>{notesElement}</ul>;
-  }
-
   return (
     <section id='notesDisplay'>
       <header>
@@ -71,11 +58,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
         )}
       </header>
 
-      {notesToDisplay ? (
-        createNotesElement(notesToDisplay)
-      ) : (
-        <p>{'NothingsHere.jpeg'}</p>
-      )}
+      <NotesList noteRecords={notesToDisplay} onDeleteNote={onDeleteNote}/>
 
       <footer>
         <button type='button' onClick={onDraftNewNote}>
