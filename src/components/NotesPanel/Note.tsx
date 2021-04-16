@@ -1,13 +1,13 @@
 import React from 'react';
-import { NoteRecord } from '../../lib/types';
+import { Note } from '../../lib/types';
 
-type NoteProps = {
-  noteRecord: NoteRecord;
+type NoteComponentProps = {
+  note: Note;
   handleDeleteNote: () => void;
 };
 
-const Note: React.FC<NoteProps> = ({ noteRecord, handleDeleteNote }) => {
-  const { date, note, url } = noteRecord;
+const NoteComponent: React.FC<NoteComponentProps> = ({ note, handleDeleteNote }) => {
+  const { date, text, url } = note;
 
   let urlDisplay: string | React.ReactElement<HTMLAnchorElement>;
   if (url.startsWith('chrome:')) {
@@ -28,7 +28,7 @@ const Note: React.FC<NoteProps> = ({ noteRecord, handleDeleteNote }) => {
   return (
     <li>
       <article>
-        <p>{note}</p>
+        <p>{text}</p>
         <footer>
           <time dateTime={date}>{new Date(date).toLocaleString()}</time>
           <span>{urlDisplay}</span>
@@ -39,4 +39,4 @@ const Note: React.FC<NoteProps> = ({ noteRecord, handleDeleteNote }) => {
   );
 };
 
-export default Note;
+export default NoteComponent;

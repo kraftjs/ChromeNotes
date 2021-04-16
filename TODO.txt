@@ -1,5 +1,4 @@
 TODO:
-  - improve type names
   - include asterisk tooltip that explains limits of sync storage and current number of notes
   - format Notes to scroll when there are too many
   - limit amount of characters each note displays unless clicked

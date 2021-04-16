@@ -1,9 +1,9 @@
-import { NoteRecord, SyncStorageData, EventMessages } from './lib/types';
+import { Note, SyncStorageData, EventMessages } from './lib/types';
 import isValidUrl from './lib/url-validator';
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.runtime.getPlatformInfo((platformInfo) => {
-    const variableKey = platformInfo.os === 'mac' ? 'Command' : 'Ctrl';
+    const variableKey = platformInfo.os === 'mac' ? 'Alt' : 'Ctrl';
     const title = `ChromeNotes:\n${variableKey}+Shift+F to open extension.`;
     chrome.action.setTitle({ title });
   });
@@ -46,11 +46,11 @@ function updateBadgeText(url: string) {
     if (data) {
       const notes = Object.values(data);
       const currentTabUrl = new URL(url);
-      const notesFilteredByUrl = notes.filter((noteRecord: NoteRecord) => {
-        if (!noteRecord.url) {
+      const notesFilteredByUrl = notes.filter((note: Note) => {
+        if (!note.url) {
           return false;
         }
-        const noteUrl = new URL(noteRecord.url);
+        const noteUrl = new URL(note.url);
         return noteUrl.hostname === currentTabUrl.hostname;
       });
 

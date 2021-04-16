@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { NoteInfo, NoteRecord, SyncStorageData, EventMessages, UUID } from '../lib/types';
+import { NoteRecord, Note, SyncStorageData, EventMessages, UUID } from '../lib/types';
 import isValidUrl from '../lib/url-validator';
 import Heading from './Heading';
 import NoteCount from './NoteCount';
@@ -12,7 +12,7 @@ import './App.css';
 const NOTE_CHAR_LIMIT = 4000;
 
 const App: React.FC = () => {
-  const [notes, setNotes] = useState<NoteInfo[]>([]);
+  const [noteRecords, setNoteRecords] = useState<NoteRecord[]>([]);
   const [url, setUrl] = useState('');
   const [showForm, setShowForm] = useState(false);
 
@@ -30,8 +30,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     chrome.storage.sync.get(null, (data: SyncStorageData) => {
-      const notes: NoteInfo[] = Object.entries(data);
-      setNotes(notes);
+      let notes: NoteRecord[] = [];
+      for (const [uuid, note] of Object.entries(data)) {
+        notes.push({ uuid, note });
+      }
+      setNoteRecords(notes);
     });
 
     chrome.tabs.query(
@@ -44,28 +47,28 @@ const App: React.FC = () => {
 
   useEffect(() => {
     chrome.runtime.sendMessage(EventMessages.NoteChange);
-  }, [notes]);
+  }, [noteRecords]);
 
   function saveNote(text: string) {
     const uuid: UUID = uuidv4();
     const noteUrl = isValidUrl(url) ? url : '';
-    const newNoteRecord: NoteRecord = {
+    const newNote: Note = {
       date: new Date().toLocaleString(),
-      note: text,
+      text: text,
       url: noteUrl,
     };
 
-    chrome.storage.sync.set({ [uuid]: newNoteRecord }, () => {
-      const noteInfo: NoteInfo = [uuid, newNoteRecord];
-      setNotes([noteInfo, ...notes]);
+    chrome.storage.sync.set({ [uuid]: newNote }, () => {
+      const noteRecord: NoteRecord = { uuid, note: newNote };
+      setNoteRecords([noteRecord, ...noteRecords]);
       setShowForm(false);
     });
   }
 
   function deleteNote(uuid: UUID) {
     chrome.storage.sync.remove(uuid, () => {
-      const filteredNotes = notes.filter(([id]) => id !== uuid);
-      setNotes(filteredNotes);
+      const filteredNotes = noteRecords.filter((noteRecord) => noteRecord.uuid !== uuid);
+      setNoteRecords(filteredNotes);
     });
   }
 
@@ -80,13 +83,13 @@ const App: React.FC = () => {
         />
       ) : (
         <NotesPanel
-          notes={notes}
+          noteRecords={noteRecords}
           url={url}
           onDeleteNote={deleteNote}
           onDraftNewNote={() => setShowForm(true)}
         />
       )}
-      <NoteCount noteCount={notes.length} />
+      <NoteCount noteCount={noteRecords.length} />
     </React.Fragment>
   );
 };

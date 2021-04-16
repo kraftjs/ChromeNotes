@@ -1,14 +1,14 @@
 export type UUID = string;
 
-export type NoteRecord = {
+export type Note = {
   date: string;
-  note: string;
+  text: string;
   url: string;
 }
 
-export type SyncStorageData = Record<UUID, NoteRecord>;
+export type SyncStorageData = Record<UUID, Note>;
 
-export type NoteInfo = [uuid: UUID, noteRecord: NoteRecord];
+export type NoteRecord = { uuid: UUID, note: Note };
 
 export enum EventMessages {
   UpdateUrl = 'UPDATE_URL',

@@ -1,42 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { NoteInfo, UUID } from '../../lib/types';
+import { NoteRecord, UUID } from '../../lib/types';
 import isValidUrl from '../../lib/url-validator';
 import Note from './Note';
 
 import './NotesPanel.css';
 
 type NotesPanelProps = {
-  notes: NoteInfo[];
+  noteRecords: NoteRecord[];
   url: string;
   onDeleteNote: (uuid: UUID) => void;
   onDraftNewNote: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const NotesPanel: React.FC<NotesPanelProps> = ({
-  notes,
+  noteRecords,
   url,
   onDeleteNote,
   onDraftNewNote,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [notesToDisplay, setNotesToDisplay] = useState<NoteInfo[]>([]);
+  const [notesToDisplay, setNotesToDisplay] = useState<NoteRecord[]>([]);
   const [showOnlyRelatedNotes, toggleshowOnlyRelatedNotes] = useState(true);
 
   useEffect(() => {
     console.log('searchQuery:', searchQuery);
-    console.log('notes:', notes);
+    console.log('notes:', noteRecords);
     if (showOnlyRelatedNotes && isValidUrl(url)) {
-      const relatedNotes = notes.filter(([, noteRecord]) => {
-        return new URL(noteRecord.url).hostname === new URL(url).hostname;
+      const relatedNotes = noteRecords.filter(({ note }) => {
+        return new URL(note.url).hostname === new URL(url).hostname;
       });
       setNotesToDisplay(relatedNotes);
     } else {
-      const filteredNotes = notes.filter(([, noteRecord]) => {
-        return noteRecord.url.includes(searchQuery);
+      const filteredNotes = noteRecords.filter(({ note }) => {
+        return note.url.includes(searchQuery);
       });
       setNotesToDisplay(filteredNotes);
     }
-  }, [searchQuery, showOnlyRelatedNotes, notes, url]);
+  }, [searchQuery, showOnlyRelatedNotes, noteRecords, url]);
 
   function handleQueryChange({ target }: React.ChangeEvent<HTMLInputElement>) {
     const normalizedQuery = target.value.trim().toLowerCase();
@@ -44,11 +44,11 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
   }
 
   // TODO: Make a NotesList components
-  function createNotesElement(notes: NoteInfo[]) {
-    const notesElement = notes.map(([uuid, noteRecord]) => (
+  function createNotesElement(notes: NoteRecord[]) {
+    const notesElement = notes.map(({ uuid, note }) => (
       <Note
         key={uuid}
-        noteRecord={noteRecord}
+        note={note}
         handleDeleteNote={() => onDeleteNote(uuid)}
       />
     ));
