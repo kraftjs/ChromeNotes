@@ -1,4 +1,4 @@
-import { Note, SyncStorageData, EventMessages } from './lib/types';
+import { EventMessages, Note, SyncStorageData } from './lib/types';
 import isValidUrl from './lib/url-validator';
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -11,12 +11,9 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message === EventMessages.NoteChange) {
-    chrome.tabs.query(
-      { active: true, windowId: chrome.windows.WINDOW_ID_CURRENT },
-      (tabs) => {
-        updateBadgeText(tabs[0].url || '');
-      },
-    );
+    chrome.tabs.query({ active: true, windowId: chrome.windows.WINDOW_ID_CURRENT }, (tabs) => {
+      updateBadgeText(tabs[0].url || '');
+    });
   }
 });
 

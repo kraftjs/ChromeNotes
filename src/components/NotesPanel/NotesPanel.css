@@ -1,0 +1,23 @@
+#notesPanel > header {
+    margin: 0 2rem;
+}
+
+.query {
+    color: #747676;
+    outline: none;
+    width: 100%;
+    text-align: center;
+    padding: 0.33em 0.5em 0.25em;
+    border-radius: 2px;
+    border: none;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08), 0 -1px 5px rgba(0, 0, 0, 0.08);
+}
+
+::placeholder {
+    text-align: center;
+}
+
+.query:placeholder-shown {
+    text-align: left;
+    caret-color: rgba(116, 118, 118, 0.5);
+}

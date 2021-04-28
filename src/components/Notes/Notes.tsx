@@ -6,8 +6,7 @@ import './Notes.css';
 type NotesProps = {
   noteRecords: NoteRecord[];
   onDeleteNote: (uuid: UUID) => void;
-}
-
+};
 
 type NoteComponentProps = {
   note: Note;
@@ -20,34 +19,26 @@ const Notes: React.FC<NotesProps> = ({ noteRecords, onDeleteNote }) => {
     noteRecords: NoteRecord[],
     deleteNote: (uuid: UUID) => void,
   ): ReactElement<HTMLUListElement> | ReactElement<HTMLParagraphElement> {
-
     if (noteRecords) {
-      const notesList = noteRecords.map(({ uuid, note }) => <NoteComponent
-        key={uuid}
-        note={note}
-        handleDeleteNote={() => deleteNote(uuid)}
-      />);
+      const notesList = noteRecords.map(({ uuid, note }) => (
+        <NoteComponent key={uuid} note={note} handleDeleteNote={() => deleteNote(uuid)} />
+      ));
       return <ul>{notesList}</ul>;
     } else {
-      return <p>{'NothingsHer.jpeg'}</p>;
+      return <p>'NothingsHer.jpeg'</p>;
     }
   }
 
-  return (
-    <React.Fragment>
-      {insertNotesList(noteRecords, onDeleteNote)}
-    </React.Fragment>
-  );
+  return <React.Fragment>{insertNotesList(noteRecords, onDeleteNote)}</React.Fragment>;
 };
 
 const NoteComponent: React.FC<NoteComponentProps> = ({ note, handleDeleteNote }) => {
   const { date, text, url } = note;
 
-  function formatUrl(url: string): string | ReactElement<HTMLAnchorElement> {
-
+  function formatUrlDisplay(url: string): string | ReactElement<HTMLAnchorElement> {
     let urlDisplay: string | ReactElement<HTMLAnchorElement>;
     if (url.startsWith('chrome:')) {
-      urlDisplay = url;
+      urlDisplay = <p>{url}</p>;
     } else if (url) {
       urlDisplay = (
         <a href={url} target='_newtab'>
@@ -58,23 +49,25 @@ const NoteComponent: React.FC<NoteComponentProps> = ({ note, handleDeleteNote })
         chrome.tabs.create({ url });
       });
     } else {
-      urlDisplay = 'No url';
+      urlDisplay = '<p>No url</p>';
     }
 
     return urlDisplay;
   }
 
-
   return (
     <li>
-      <article>
-        <p>{text}</p>
-        <footer>
-          <time dateTime={date}>{new Date(date).toLocaleString()}</time>
-          <span>{formatUrl(url)}</span>
-        </footer>
-        <button onClick={handleDeleteNote}>Delete note</button>
-      </article>
+      <div className='content-container'>
+        <article>
+          <p>{text}</p>
+          <footer>
+            {formatUrlDisplay(url)}
+            <time dateTime={date}>{new Date(date).toLocaleDateString('en-US')}</time>
+          </footer>
+        </article>
+        <button className='hidden' onClick={handleDeleteNote}>{'\u00D7'}</button>
+      </div>
+      <hr />
     </li>
   );
 };

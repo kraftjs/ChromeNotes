@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { NoteRecord, Note, SyncStorageData, EventMessages, UUID } from '../lib/types';
+import { EventMessages, Note, NoteRecord, SyncStorageData, UUID } from '../lib/types';
 import isValidUrl from '../lib/url-validator';
-import Heading from './Heading';
-import NoteCount from './NoteCount';
 import NoteForm from './NoteForm';
 import NotesPanel from './NotesPanel';
 
@@ -19,12 +17,9 @@ const App: React.FC = () => {
   chrome.runtime.onMessage.addListener((message: string) => {
     console.log(message);
     if (message === EventMessages.UpdateUrl) {
-      chrome.tabs.query(
-        { active: true, windowId: chrome.windows.WINDOW_ID_CURRENT },
-        (tabs) => {
-          setUrl(tabs[0].url || '');
-        },
-      );
+      chrome.tabs.query({ active: true, windowId: chrome.windows.WINDOW_ID_CURRENT }, (tabs) => {
+        setUrl(tabs[0].url || '');
+      });
     }
   });
 
@@ -37,12 +32,9 @@ const App: React.FC = () => {
       setNoteRecords(notes);
     });
 
-    chrome.tabs.query(
-      { active: true, windowId: chrome.windows.WINDOW_ID_CURRENT },
-      (tabs) => {
-        setUrl(tabs[0].url || '');
-      },
-    );
+    chrome.tabs.query({ active: true, windowId: chrome.windows.WINDOW_ID_CURRENT }, (tabs) => {
+      setUrl(tabs[0].url || '');
+    });
   }, []);
 
   useEffect(() => {
@@ -74,7 +66,9 @@ const App: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Heading />
+      <header>
+        <h1>ChromeNotes</h1>
+      </header>
       {showForm ? (
         <NoteForm
           FORM_CHAR_LIMIT={NOTE_CHAR_LIMIT}
@@ -89,7 +83,6 @@ const App: React.FC = () => {
           onDraftNewNote={() => setShowForm(true)}
         />
       )}
-      <NoteCount noteCount={noteRecords.length} />
     </React.Fragment>
   );
 };

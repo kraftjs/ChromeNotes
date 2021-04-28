@@ -44,7 +44,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
   }
 
   return (
-    <section id='notesDisplay'>
+    <section id='notesPanel'>
       <header>
         {showOnlyRelatedNotes ? (
           <p>{'<NavBar />'}</p>
@@ -54,19 +54,18 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
             placeholder='Search notes by URL'
             value={searchQuery}
             onChange={handleQueryChange}
+            className="query"
           />
         )}
       </header>
 
-      <NotesList noteRecords={notesToDisplay} onDeleteNote={onDeleteNote}/>
+      <NotesList noteRecords={notesToDisplay} onDeleteNote={onDeleteNote} />
 
       <footer>
         <button type='button' onClick={onDraftNewNote}>
           Create note
         </button>
-        <button
-          type='button'
-          onClick={() => toggleshowOnlyRelatedNotes(!showOnlyRelatedNotes)}>
+        <button type='button' onClick={() => toggleshowOnlyRelatedNotes(!showOnlyRelatedNotes)}>
           {showOnlyRelatedNotes ? 'View all notes' : 'Filter notes'}
         </button>
       </footer>

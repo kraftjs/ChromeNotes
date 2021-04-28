@@ -8,10 +8,7 @@ type FormCharacterCountProps = {
   text: string;
 };
 
-const FormCharacterCount: React.FC<FormCharacterCountProps> = ({
-  FORM_CHAR_LIMIT,
-  text,
-}) => {
+const FormCharacterCount: React.FC<FormCharacterCountProps> = ({ FORM_CHAR_LIMIT, text }) => {
   useEffect(() => {
     const countDisplay = document.querySelector<HTMLSpanElement>('#charCount');
     if (text.length <= FORM_CHAR_LIMIT) {
@@ -23,12 +20,7 @@ const FormCharacterCount: React.FC<FormCharacterCountProps> = ({
 
   return (
     <span id='charCount'>
-      <img
-        src={alert}
-        alt='alert: too many characters'
-        width='20'
-        height='20'
-      />
+      <img src={alert} alt='alert: too many characters' width='20' height='20' />
       <strong>{text.length}</strong>/{FORM_CHAR_LIMIT}
     </span>
   );

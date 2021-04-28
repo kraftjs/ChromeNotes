@@ -1,3 +1,17 @@
+:root {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 #popup {
   font-style: normal;
   height: 100%;
@@ -6,12 +20,17 @@
 
 body {
   height: 570px;
-  width: 450px;
+  width: 400px;
   position: relative;
+  font-family: Helvetica, Arial, sans-serif;
+  color: #0f1111;
+  background-color: #ffffff;
 }
 
 h1 {
+  font-size: 2.125rem;
+  line-height: 1.205882353;
   text-align: center;
-  margin: 0 0 15px 0;
-  padding: 10px 0 0 0;
+  margin: 1rem 0;
+  color: #0f1111;
 }

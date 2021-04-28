@@ -1,11 +1,5 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  MouseEvent,
-  useEffect,
-  useState,
-} from 'react';
-import FormCharacterCount from '../FormCharacterCount';
+import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
+import FormCharacterCount from './FormCharacterCount';
 
 import './NoteForm.css';
 
@@ -15,14 +9,9 @@ type NoteFormProps = {
   onCancelNote: () => void;
 };
 
-const NoteForm: React.FC<NoteFormProps> = ({
-  FORM_CHAR_LIMIT,
-  onSaveNote,
-  onCancelNote,
-}) => {
+const NoteForm: React.FC<NoteFormProps> = ({ FORM_CHAR_LIMIT, onSaveNote, onCancelNote }) => {
   const [text, setText] = useState('');
-  const isValid: boolean =
-    text.length <= FORM_CHAR_LIMIT && text.replace(/\s/g, '').length > 0;
+  const isValid: boolean = text.length <= FORM_CHAR_LIMIT && text.replace(/\s/g, '').length > 0;
 
   useEffect(() => {
     document.querySelector<HTMLTextAreaElement>('textarea')?.focus();

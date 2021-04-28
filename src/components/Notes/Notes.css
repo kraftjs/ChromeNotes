@@ -1,0 +1,98 @@
+ul {
+  margin-top: 0.5rem;
+  padding: 0;
+  list-style-type: none;
+  height: 412px;
+  overflow-y: auto;
+}
+
+li {
+  margin: 0 2rem;
+}
+
+hr {
+  margin-top: 0;
+  margin-bottom: 0;
+  color: #70757a;
+}
+
+a {
+  max-width: 80%;
+  height: 1.083333333em;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+time {
+  margin-left: 1.5em;
+}
+
+.content-container {
+  display: flex;
+  align-items: center;
+}
+
+li + li > .content-container {
+  margin-top: -1px;
+}
+
+.hidden {
+  display: none;
+}
+
+li > .content-container > button {
+  flex: 0 0 2rem;
+  font-size: 1.2em;
+  margin: -1px 0;
+  border: none;
+  background-color: red;
+  border-bottom-right-radius: 5px;
+  border-top-right-radius: 5px;
+  color: white;
+  cursor: pointer;
+  align-self: stretch;
+}
+
+li > .content-container > article {
+  max-width: 100%;
+  display: block;
+  flex: 1;
+}
+
+li:hover > .content-container {
+  margin-right: -2rem;
+}
+
+li:hover > .content-container > button {
+  display: initial;
+}
+
+li:hover > .content-container > article {
+  max-width: calc(100% - 2rem);
+}
+
+.content-container > article > p {
+  font-size: 0.8125rem;
+  overflow: hidden;
+  word-break: break-word;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  margin: 0.923076923em 0 0.615384615em;
+}
+
+.content-container > article > footer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.content-container > article > footer * {
+  font-size: 0.75rem;
+  color: #747676;
+  margin-top: 0;
+  margin-bottom: 0;
+}
