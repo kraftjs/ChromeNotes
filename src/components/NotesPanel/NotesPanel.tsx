@@ -18,25 +18,27 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
   onDeleteNote,
   onDraftNewNote,
 }) => {
+  console.log('URL:', url);
   const [searchQuery, setSearchQuery] = useState('');
   const [notesToDisplay, setNotesToDisplay] = useState<NoteRecord[]>([]);
-  const [showOnlyRelatedNotes, toggleshowOnlyRelatedNotes] = useState(true);
+  const [baseUrlOfCurrentTab, setBaseUrlOfCurrentTab] = useState('');
 
   useEffect(() => {
-    console.log('searchQuery:', searchQuery);
-    console.log('notes:', noteRecords);
-    if (showOnlyRelatedNotes && isValidUrl(url)) {
-      const relatedNotes = noteRecords.filter(({ note }) => {
-        return new URL(note.url).hostname === new URL(url).hostname;
-      });
-      setNotesToDisplay(relatedNotes);
-    } else {
-      const filteredNotes = noteRecords.filter(({ note }) => {
-        return note.url.includes(searchQuery);
-      });
-      setNotesToDisplay(filteredNotes);
+    if (isValidUrl(url)) {
+      const updatedUrl = new URL(url);
+      let protocol = updatedUrl.protocol ? updatedUrl.protocol + '//' : '';
+      let hostname = updatedUrl.hostname;
+      setSearchQuery(protocol + hostname);
+      setBaseUrlOfCurrentTab(protocol + hostname);
     }
-  }, [searchQuery, showOnlyRelatedNotes, noteRecords, url]);
+  }, [url]);
+
+  useEffect(() => {
+    const filteredNotes = noteRecords.filter(({ note }) => {
+      return note.url.includes(searchQuery);
+    });
+    setNotesToDisplay(filteredNotes);
+  }, [searchQuery, noteRecords]);
 
   function handleQueryChange({ target }: React.ChangeEvent<HTMLInputElement>) {
     const normalizedQuery = target.value.trim().toLowerCase();
@@ -46,27 +48,28 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
   return (
     <section id='notesPanel'>
       <header>
-        {showOnlyRelatedNotes ? (
-          <p>{'<NavBar />'}</p>
-        ) : (
-          <input
-            type='search'
-            placeholder='Search notes by URL'
-            value={searchQuery}
-            onChange={handleQueryChange}
-            className="query"
-          />
-        )}
+        <input
+          type='search'
+          spellCheck={false}
+          placeholder='Search notes by URL'
+          value={searchQuery}
+          onChange={handleQueryChange}
+          className='query'
+        />
+        <button
+          type='button'
+          onClick={() => (searchQuery ? setSearchQuery('') : setSearchQuery(baseUrlOfCurrentTab))}>
+          {searchQuery ? 'clear query' : 'reset filter'}
+        </button>
       </header>
 
-      <NotesList noteRecords={notesToDisplay} onDeleteNote={onDeleteNote} />
+      <div className='notes-list-wrapper'>
+        <NotesList noteRecords={notesToDisplay} onDeleteNote={onDeleteNote} />
+      </div>
 
       <footer>
         <button type='button' onClick={onDraftNewNote}>
           Create note
-        </button>
-        <button type='button' onClick={() => toggleshowOnlyRelatedNotes(!showOnlyRelatedNotes)}>
-          {showOnlyRelatedNotes ? 'View all notes' : 'Filter notes'}
         </button>
       </footer>
     </section>

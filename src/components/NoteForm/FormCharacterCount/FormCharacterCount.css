@@ -11,6 +11,7 @@
 }
 
 #charCount > strong {
+  font-weight: normal;
   display: inline-block;
   text-align: right;
   width: 4ch;

@@ -1,9 +1,10 @@
 ul {
-  margin-top: 0.5rem;
+  margin-top: 0;
+  margin-bottom: 0;
   padding: 0;
   list-style-type: none;
-  height: 412px;
   overflow-y: auto;
+  max-height: 100%;
 }
 
 li {
@@ -13,7 +14,7 @@ li {
 hr {
   margin-top: 0;
   margin-bottom: 0;
-  color: #70757a;
+  color: rgba(116, 118, 118, 0.5);
 }
 
 a {
@@ -29,6 +30,13 @@ time {
   margin-left: 1.5em;
 }
 
+.no-notes-to-show {
+  margin: 0 2rem;
+  height: 100%;
+  width: 100%;
+  background-image: linear-gradient(to bottom, white, blue);
+}
+
 .content-container {
   display: flex;
   align-items: center;
@@ -42,17 +50,23 @@ li + li > .content-container {
   display: none;
 }
 
-li > .content-container > button {
+.note-controls {
   flex: 0 0 2rem;
-  font-size: 1.2em;
   margin: -1px 0;
-  border: none;
-  background-color: red;
-  border-bottom-right-radius: 5px;
-  border-top-right-radius: 5px;
-  color: white;
-  cursor: pointer;
+  background-color: transparent;
   align-self: stretch;
+  text-align: center;
+}
+
+.note-controls > button.expand-options {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1.2em;
+  font-weight: 600;
+  background-color: transparent;
+  color: #70757a;
+  border: none;
+  cursor: pointer;
 }
 
 li > .content-container > article {
@@ -62,26 +76,31 @@ li > .content-container > article {
 }
 
 li:hover > .content-container {
-  margin-right: -2rem;
+  margin-left: -2rem;
 }
 
-li:hover > .content-container > button {
-  display: initial;
+li:hover > .content-container > .note-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 li:hover > .content-container > article {
   max-width: calc(100% - 2rem);
 }
 
-.content-container > article > p {
+.note-text {
   font-size: 0.8125rem;
-  overflow: hidden;
+  margin: 0.923076923em 0 0.615384615em;
   word-break: break-word;
+}
+
+.line-limit {
   text-overflow: ellipsis;
+  overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
-  margin: 0.923076923em 0 0.615384615em;
 }
 
 .content-container > article > footer {
@@ -96,3 +115,19 @@ li:hover > .content-container > article {
   margin-top: 0;
   margin-bottom: 0;
 }
+
+ul::-webkit-scrollbar {
+  width: 12px;
+}
+
+ul::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+ul::-webkit-scrollbar-thumb {
+  background-color: blue;
+  border-radius: 20px;
+  border: 3px solid orange;
+}
+
+/* TODO: decrease LI margin-right when scrollbar is shown */

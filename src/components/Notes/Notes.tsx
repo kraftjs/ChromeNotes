@@ -13,23 +13,21 @@ type NoteComponentProps = {
   handleDeleteNote: () => void;
 };
 
-// TODO: Debate whether to keep this function or have a messy JSX return
 const Notes: React.FC<NotesProps> = ({ noteRecords, onDeleteNote }) => {
-  function insertNotesList(
-    noteRecords: NoteRecord[],
-    deleteNote: (uuid: UUID) => void,
-  ): ReactElement<HTMLUListElement> | ReactElement<HTMLParagraphElement> {
-    if (noteRecords) {
-      const notesList = noteRecords.map(({ uuid, note }) => (
-        <NoteComponent key={uuid} note={note} handleDeleteNote={() => deleteNote(uuid)} />
-      ));
-      return <ul>{notesList}</ul>;
-    } else {
-      return <p>'NothingsHer.jpeg'</p>;
-    }
-  }
-
-  return <React.Fragment>{insertNotesList(noteRecords, onDeleteNote)}</React.Fragment>;
+  console.log('noteRecords:', noteRecords);
+  return (
+    <React.Fragment>
+      {noteRecords.length ? (
+        <ul>
+          {noteRecords.map(({ uuid, note }) => (
+            <NoteComponent key={uuid} note={note} handleDeleteNote={() => onDeleteNote(uuid)} />
+          ))}
+        </ul>
+      ) : (
+        <div className='no-notes-to-show'>test</div>
+      )}
+    </React.Fragment>
+  );
 };
 
 const NoteComponent: React.FC<NoteComponentProps> = ({ note, handleDeleteNote }) => {
@@ -51,21 +49,32 @@ const NoteComponent: React.FC<NoteComponentProps> = ({ note, handleDeleteNote })
     } else {
       urlDisplay = '<p>No url</p>';
     }
-
     return urlDisplay;
   }
 
+  function toggleNoteLineLimit({ target }: React.MouseEvent<HTMLParagraphElement>) {
+    (target as HTMLParagraphElement).classList.toggle('line-limit');
+  }
+
+  // TODO: change button.expand-options onClick attribute to show other buttons
+  // TODO: add handleDeleteNote and handleEditNote buttons.
   return (
     <li>
       <div className='content-container'>
+        <div className='hidden note-controls'>
+          <button className='expand-options' onClick={handleDeleteNote}>
+            {'\u22EE'}
+          </button>
+        </div>
         <article>
-          <p>{text}</p>
+          <p className={'note-text line-limit'} onClick={toggleNoteLineLimit}>
+            {text}
+          </p>
           <footer>
             {formatUrlDisplay(url)}
             <time dateTime={date}>{new Date(date).toLocaleDateString('en-US')}</time>
           </footer>
         </article>
-        <button className='hidden' onClick={handleDeleteNote}>{'\u00D7'}</button>
       </div>
       <hr />
     </li>

@@ -69,20 +69,23 @@ const App: React.FC = () => {
       <header>
         <h1>ChromeNotes</h1>
       </header>
-      {showForm ? (
-        <NoteForm
-          FORM_CHAR_LIMIT={NOTE_CHAR_LIMIT}
-          onSaveNote={saveNote}
-          onCancelNote={() => setShowForm(false)}
-        />
-      ) : (
-        <NotesPanel
-          noteRecords={noteRecords}
-          url={url}
-          onDeleteNote={deleteNote}
-          onDraftNewNote={() => setShowForm(true)}
-        />
-      )}
+
+      <main>
+        {showForm ? (
+          <NoteForm
+            FORM_CHAR_LIMIT={NOTE_CHAR_LIMIT}
+            onSaveNote={saveNote}
+            onCancelNote={() => setShowForm(false)}
+          />
+        ) : (
+          <NotesPanel
+            noteRecords={noteRecords}
+            url={url}
+            onDeleteNote={deleteNote}
+            onDraftNewNote={() => setShowForm(true)}
+          />
+        )}
+      </main>
     </React.Fragment>
   );
 };

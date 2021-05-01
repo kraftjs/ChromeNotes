@@ -36,7 +36,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ FORM_CHAR_LIMIT, onSaveNote, onCanc
   return (
     <form id='noteForm' onSubmit={handleFormSubmit}>
       <label htmlFor='noteTextArea'>
-        <textarea id='noteTextArea' value={text} onChange={handleInputChange} />
+        <textarea id='noteTextArea' maxLength={9999} value={text} onChange={handleInputChange} />
         <FormCharacterCount FORM_CHAR_LIMIT={FORM_CHAR_LIMIT} text={text} />
       </label>
       <footer>
