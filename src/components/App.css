@@ -35,6 +35,7 @@ h1 {
   font-size: 2.125rem;
   line-height: 1.205882353;
   text-align: center;
-  margin: 1rem 0;
+  margin: 0;
+  padding: 1rem 0;
   color: #0f1111;
 }

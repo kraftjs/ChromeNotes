@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { Note, NoteRecord, UUID } from '../../lib/types';
 
 import './Notes.css';
@@ -14,7 +14,17 @@ type NoteComponentProps = {
 };
 
 const Notes: React.FC<NotesProps> = ({ noteRecords, onDeleteNote }) => {
-  console.log('noteRecords:', noteRecords);
+  useEffect(() => {
+    const notesContainer = document.querySelector<HTMLUListElement>('ul');
+    if (notesContainer && notesContainer.scrollHeight > notesContainer.clientHeight) {
+      notesContainer.classList.add('scrollbar-padding');
+    }
+
+    return () => {
+      notesContainer?.classList.remove('scrollbar-padding');
+    };
+  });
+
   return (
     <React.Fragment>
       {noteRecords.length ? (
@@ -53,7 +63,18 @@ const NoteComponent: React.FC<NoteComponentProps> = ({ note, handleDeleteNote })
   }
 
   function toggleNoteLineLimit({ target }: React.MouseEvent<HTMLParagraphElement>) {
-    (target as HTMLParagraphElement).classList.toggle('line-limit');
+    if (target instanceof HTMLParagraphElement) {
+      target.classList.toggle('line-limit');
+
+      const notesContainer = target.closest<HTMLTextAreaElement>('ul');
+      if (!notesContainer) {
+        return;
+      } else if (notesContainer.scrollHeight > notesContainer.clientHeight) {
+        notesContainer.classList.add('scrollbar-padding');
+      } else {
+        notesContainer.classList.remove('scrollbar-padding');
+      }
+    }
   }
 
   // TODO: change button.expand-options onClick attribute to show other buttons

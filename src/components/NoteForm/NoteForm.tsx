@@ -17,6 +17,15 @@ const NoteForm: React.FC<NoteFormProps> = ({ FORM_CHAR_LIMIT, onSaveNote, onCanc
     document.querySelector<HTMLTextAreaElement>('textarea')?.focus();
   }, []);
 
+  useEffect(() => {
+    const textarea = document.querySelector<HTMLTextAreaElement>('#noteTextArea');
+    if (textarea && textarea.scrollHeight > textarea.clientHeight) {
+      textarea.classList.add('scrollbar-padding');
+    } else {
+      textarea?.classList.remove('scrollbar-padding');
+    }
+  }, [text]);
+
   function handleInputChange({ target }: ChangeEvent<HTMLTextAreaElement>) {
     setText(target.value);
   }
