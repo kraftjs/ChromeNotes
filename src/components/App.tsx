@@ -13,9 +13,9 @@ const App: React.FC = () => {
   const [noteRecords, setNoteRecords] = useState<NoteRecord[]>([]);
   const [url, setUrl] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [noteRecordToEdit, setNoteRecordToEdit] = useState<NoteRecord>();
 
   chrome.runtime.onMessage.addListener((message: string) => {
-    console.log(message);
     if (message === EventMessages.UpdateUrl) {
       chrome.tabs.query({ active: true, windowId: chrome.windows.WINDOW_ID_CURRENT }, (tabs) => {
         setUrl(tabs[0].url || '');
@@ -23,6 +23,7 @@ const App: React.FC = () => {
     }
   });
 
+  // TODO: Sort noteRecords by note date on initial pull
   useEffect(() => {
     chrome.storage.sync.get(null, (data: SyncStorageData) => {
       let notes: NoteRecord[] = [];
@@ -41,20 +42,31 @@ const App: React.FC = () => {
     chrome.runtime.sendMessage(EventMessages.NoteChange);
   }, [noteRecords]);
 
-  function saveNote(text: string) {
-    const uuid: UUID = uuidv4();
-    const noteUrl = isValidUrl(url) ? url : '';
-    const newNote: Note = {
-      date: new Date().toLocaleString(),
-      text: text,
-      url: noteUrl,
-    };
+  function saveNote(note: string | Note, uuid: UUID = uuidv4()) {
+    let noteToSave: Note;
+    if (typeof note === 'string') {
+      const noteUrl = isValidUrl(url) ? url : '';
+      noteToSave = {
+        date: new Date().toLocaleString(),
+        text: note,
+        url: noteUrl,
+      };
+    } else {
+      noteToSave = note;
+    }
 
-    chrome.storage.sync.set({ [uuid]: newNote }, () => {
-      const noteRecord: NoteRecord = { uuid, note: newNote };
-      setNoteRecords([noteRecord, ...noteRecords]);
+    chrome.storage.sync.set({ [uuid]: noteToSave }, () => {
+      const noteRecord: NoteRecord = { uuid, note: noteToSave };
+      const filteredNotes = noteRecords.filter((noteRecord) => noteRecord.uuid !== uuid);
+      setNoteRecords([noteRecord, ...filteredNotes]);
+      setNoteRecordToEdit(undefined);
       setShowForm(false);
     });
+  }
+
+  function editNote(uuid: UUID, note: Note) {
+    setNoteRecordToEdit({ uuid, note });
+    setShowForm(true);
   }
 
   function deleteNote(uuid: UUID) {
@@ -74,6 +86,7 @@ const App: React.FC = () => {
         {showForm ? (
           <NoteForm
             FORM_CHAR_LIMIT={NOTE_CHAR_LIMIT}
+            noteRecordToEdit={noteRecordToEdit}
             onSaveNote={saveNote}
             onCancelNote={() => setShowForm(false)}
           />
@@ -81,6 +94,7 @@ const App: React.FC = () => {
           <NotesPanel
             noteRecords={noteRecords}
             url={url}
+            onEditNote={editNote}
             onDeleteNote={deleteNote}
             onDraftNewNote={() => setShowForm(true)}
           />

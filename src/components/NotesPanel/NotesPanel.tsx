@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NoteRecord, UUID } from '../../lib/types';
+import { Note, NoteRecord, UUID } from '../../lib/types';
 import isValidUrl from '../../lib/url-validator';
 import NotesList from '../Notes';
 
@@ -8,6 +8,7 @@ import './NotesPanel.css';
 type NotesPanelProps = {
   noteRecords: NoteRecord[];
   url: string;
+  onEditNote: (uuid: UUID, note: Note) => void;
   onDeleteNote: (uuid: UUID) => void;
   onDraftNewNote: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
@@ -15,10 +16,10 @@ type NotesPanelProps = {
 const NotesPanel: React.FC<NotesPanelProps> = ({
   noteRecords,
   url,
+  onEditNote,
   onDeleteNote,
   onDraftNewNote,
 }) => {
-  console.log('URL:', url);
   const [searchQuery, setSearchQuery] = useState('');
   const [notesToDisplay, setNotesToDisplay] = useState<NoteRecord[]>([]);
   const [baseUrlOfCurrentTab, setBaseUrlOfCurrentTab] = useState('');
@@ -64,7 +65,11 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
       </header>
 
       <div className='notes-list-wrapper'>
-        <NotesList noteRecords={notesToDisplay} onDeleteNote={onDeleteNote} />
+        <NotesList
+          noteRecords={notesToDisplay}
+          onEditNote={onEditNote}
+          onDeleteNote={onDeleteNote}
+        />
       </div>
 
       <footer>

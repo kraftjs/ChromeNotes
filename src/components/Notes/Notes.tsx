@@ -5,15 +5,11 @@ import './Notes.css';
 
 type NotesProps = {
   noteRecords: NoteRecord[];
+  onEditNote: (uuid: UUID, note: Note) => void;
   onDeleteNote: (uuid: UUID) => void;
 };
 
-type NoteComponentProps = {
-  note: Note;
-  handleDeleteNote: () => void;
-};
-
-const Notes: React.FC<NotesProps> = ({ noteRecords, onDeleteNote }) => {
+const Notes: React.FC<NotesProps> = ({ noteRecords, onEditNote, onDeleteNote }) => {
   useEffect(() => {
     const notesContainer = document.querySelector<HTMLUListElement>('ul');
     if (notesContainer && notesContainer.scrollHeight > notesContainer.clientHeight) {
@@ -30,7 +26,12 @@ const Notes: React.FC<NotesProps> = ({ noteRecords, onDeleteNote }) => {
       {noteRecords.length ? (
         <ul>
           {noteRecords.map(({ uuid, note }) => (
-            <NoteComponent key={uuid} note={note} handleDeleteNote={() => onDeleteNote(uuid)} />
+            <NoteComponent
+              key={uuid}
+              note={note}
+              handleEditNote={() => onEditNote(uuid, note)}
+              handleDeleteNote={() => onDeleteNote(uuid)}
+            />
           ))}
         </ul>
       ) : (
@@ -40,7 +41,17 @@ const Notes: React.FC<NotesProps> = ({ noteRecords, onDeleteNote }) => {
   );
 };
 
-const NoteComponent: React.FC<NoteComponentProps> = ({ note, handleDeleteNote }) => {
+type NoteComponentProps = {
+  note: Note;
+  handleEditNote: () => void;
+  handleDeleteNote: () => void;
+};
+
+const NoteComponent: React.FC<NoteComponentProps> = ({
+  note,
+  handleEditNote,
+  handleDeleteNote,
+}) => {
   const { date, text, url } = note;
 
   function formatUrlDisplay(url: string): string | ReactElement<HTMLAnchorElement> {
@@ -82,10 +93,18 @@ const NoteComponent: React.FC<NoteComponentProps> = ({ note, handleDeleteNote })
   return (
     <li>
       <div className='content-container'>
-        <div className='hidden note-controls'>
-          <button className='expand-options' onClick={handleDeleteNote}>
-            {'\u22EE'}
-          </button>
+        <div className='dropdown-container'>
+          <div className='dropdown'>
+            <div className='dropdown-label'>{'\u22EE'}</div>
+            <div className='dropdown-menu'>
+              <button className='dropdown-item' onClick={handleEditNote}>
+                Edit
+              </button>
+              <button className='dropdown-item' onClick={handleDeleteNote}>
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
         <article>
           <p className={'note-text line-limit'} onClick={toggleNoteLineLimit}>

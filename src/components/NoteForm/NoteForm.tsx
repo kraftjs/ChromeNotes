@@ -1,21 +1,32 @@
 import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
+import { Note, NoteRecord, UUID } from '../../lib/types';
 import FormCharacterCount from './FormCharacterCount';
 
 import './NoteForm.css';
 
 type NoteFormProps = {
   FORM_CHAR_LIMIT: number;
-  onSaveNote: (text: string) => void;
+  noteRecordToEdit: NoteRecord | undefined;
+  onSaveNote: (note: string | Note, uuid?: UUID) => void;
   onCancelNote: () => void;
 };
 
-const NoteForm: React.FC<NoteFormProps> = ({ FORM_CHAR_LIMIT, onSaveNote, onCancelNote }) => {
+const NoteForm: React.FC<NoteFormProps> = ({
+  FORM_CHAR_LIMIT,
+  noteRecordToEdit,
+  onSaveNote,
+  onCancelNote,
+}) => {
   const [text, setText] = useState('');
   const isValid: boolean = text.length <= FORM_CHAR_LIMIT && text.replace(/\s/g, '').length > 0;
 
   useEffect(() => {
     document.querySelector<HTMLTextAreaElement>('textarea')?.focus();
   }, []);
+
+  useEffect(() => {
+    noteRecordToEdit ? setText(noteRecordToEdit.note.text) : setText('');
+  }, [noteRecordToEdit]);
 
   useEffect(() => {
     const textarea = document.querySelector<HTMLTextAreaElement>('#noteTextArea');
@@ -32,7 +43,17 @@ const NoteForm: React.FC<NoteFormProps> = ({ FORM_CHAR_LIMIT, onSaveNote, onCanc
 
   function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    onSaveNote(text);
+    if (noteRecordToEdit) {
+      const { uuid, note } = noteRecordToEdit;
+      const updatedNote: Note = {
+        date: note.date,
+        text: text,
+        url: note.url,
+      };
+      onSaveNote(updatedNote, uuid);
+    } else {
+      onSaveNote(text);
+    }
     setText('');
   }
 

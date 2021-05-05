@@ -11,7 +11,6 @@ ul.scrollbar-padding {
 }
 
 li {
-  margin: 0 0 0 2rem;
   /**
      * A calculation to ensure the note width doesn't increase
      * in edge cases where reducing the margin-right of the UL element
@@ -20,6 +19,7 @@ li {
      * overflowing.
      **/
   max-width: calc(100vw - 2 * 2rem);
+  margin: 0 0 0 2rem;
 }
 
 hr {
@@ -57,11 +57,8 @@ li + li > .content-container {
   margin-top: -1px;
 }
 
-.hidden {
+.dropdown-container {
   display: none;
-}
-
-.note-controls {
   flex: 0 0 2rem;
   margin: -1px 0;
   background-color: transparent;
@@ -69,7 +66,12 @@ li + li > .content-container {
   text-align: center;
 }
 
-.note-controls > button.expand-options {
+.dropdown {
+  display: block;
+  position: relative;
+}
+
+.dropdown-label {
   width: 1.5rem;
   height: 1.5rem;
   font-size: 1.2em;
@@ -78,6 +80,28 @@ li + li > .content-container {
   color: #70757a;
   border: none;
   cursor: pointer;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  left: -0.5em;
+  top: -1.4em;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-item {
+  width: 100%;
+  background-color: white;
+  border: 1px solid rgba(116, 118, 118, 0.5);
+  cursor: pointer;
+}
+
+.dropdown-item + .dropdown-item {
+  border-top: none;
 }
 
 li > .content-container > article {
@@ -90,7 +114,7 @@ li:hover > .content-container {
   margin-left: -2rem;
 }
 
-li:hover > .content-container > .note-controls {
+li:hover > .content-container > .dropdown-container {
   display: flex;
   align-items: center;
   justify-content: center;
