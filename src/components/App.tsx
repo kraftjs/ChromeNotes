@@ -7,7 +7,7 @@ import NotesPanel from './NotesPanel';
 
 import './App.css';
 
-const NOTE_CHAR_LIMIT = 4000;
+const NOTE_CHAR_LIMIT = 1250;
 
 const App: React.FC = () => {
   const [noteRecords, setNoteRecords] = useState<NoteRecord[]>([]);
