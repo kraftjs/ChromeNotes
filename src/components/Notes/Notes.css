@@ -153,6 +153,7 @@ li:hover > .content-container > article {
   font-size: 0.8125rem;
   margin: 0.923076923em 0 0.615384615em;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .line-limit {

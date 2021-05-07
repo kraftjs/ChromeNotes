@@ -14,3 +14,6 @@ export enum EventMessages {
   UpdateUrl = 'UPDATE_URL',
   NoteChange = 'NOTE_CHANGE',
 }
+
+export const isNote = (object: any): object is Note =>
+  !!object && 'date' in object && 'text' in object && 'url' in object;

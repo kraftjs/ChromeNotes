@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { EventMessages, Note, NoteRecord, SyncStorageData, UUID } from '../lib/types';
+import { EventMessages, isNote, Note, NoteRecord, SyncStorageData, UUID } from '../lib/types';
 import isValidUrl from '../lib/url-validator';
 import NoteForm from './NoteForm';
 import NotesPanel from './NotesPanel';
@@ -23,13 +23,17 @@ const App: React.FC = () => {
     }
   });
 
-  // TODO: Sort noteRecords by note date on initial pull
   useEffect(() => {
     chrome.storage.sync.get(null, (data: SyncStorageData) => {
       let notes: NoteRecord[] = [];
       for (const [uuid, note] of Object.entries(data)) {
         notes.push({ uuid, note });
       }
+      notes.sort((noteRecord1, noteRecord2) => {
+        const date1 = new Date(noteRecord1.note.date).valueOf();
+        const date2 = new Date(noteRecord2.note.date).valueOf();
+        return date2 - date1;
+      });
       setNoteRecords(notes);
     });
 
@@ -43,25 +47,30 @@ const App: React.FC = () => {
   }, [noteRecords]);
 
   function saveNote(note: string | Note, uuid: UUID = uuidv4()) {
-    let noteToSave: Note;
     if (typeof note === 'string') {
       const noteUrl = isValidUrl(url) ? url : '';
-      noteToSave = {
+      const noteToSave = {
         date: new Date().toLocaleString(),
         text: note,
         url: noteUrl,
       };
-    } else {
-      noteToSave = note;
-    }
 
-    chrome.storage.sync.set({ [uuid]: noteToSave }, () => {
-      const noteRecord: NoteRecord = { uuid, note: noteToSave };
-      const filteredNotes = noteRecords.filter((noteRecord) => noteRecord.uuid !== uuid);
-      setNoteRecords([noteRecord, ...filteredNotes]);
-      setNoteRecordToEdit(undefined);
-      setShowForm(false);
-    });
+      chrome.storage.sync.set({ [uuid]: noteToSave }, () => {
+        const newNoteRecord: NoteRecord = { uuid, note: noteToSave };
+        setNoteRecords([newNoteRecord, ...noteRecords]);
+        setShowForm(false);
+      });
+    } else if (isNote(note)) {
+      chrome.storage.sync.set({ [uuid]: note }, () => {
+        const editedNoteRecord: NoteRecord = { uuid, note };
+        const noteRecordsWithEdit = noteRecords.map((noteRecord) =>
+          noteRecord.uuid !== uuid ? noteRecord : editedNoteRecord,
+        );
+        setNoteRecords(noteRecordsWithEdit);
+        setNoteRecordToEdit(undefined);
+        setShowForm(false);
+      });
+    }
   }
 
   function editNote(uuid: UUID, note: Note) {

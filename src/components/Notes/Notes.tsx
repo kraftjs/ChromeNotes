@@ -54,13 +54,24 @@ const NoteComponent: React.FC<NoteComponentProps> = ({
 }) => {
   const { date, text, url } = note;
 
+  // TODO: Replace this implementation with something better
+  useEffect(() => {
+    // Add eventListener to preventDefault highlighting when a section of text is double clicked
+    document.querySelector('.note-text')?.addEventListener('mousedown', (event: Event) => {
+      const detail = (event as UIEvent).detail;
+      if (detail === 2) {
+        event.preventDefault();
+      }
+    }, false)
+  }, [])
+
   function formatUrlDisplay(url: string): string | ReactElement<HTMLAnchorElement> {
     let urlDisplay: string | ReactElement<HTMLAnchorElement>;
     if (url.startsWith('chrome:')) {
       urlDisplay = <p>{url}</p>;
     } else if (url) {
       urlDisplay = (
-        <a href={url} target='_newtab'>
+        <a href={url} rel='noreferrer noopener' target='_blank'>
           {url}
         </a>
       );
@@ -73,23 +84,29 @@ const NoteComponent: React.FC<NoteComponentProps> = ({
     return urlDisplay;
   }
 
-  function toggleNoteLineLimit({ target }: React.MouseEvent<HTMLParagraphElement>) {
+  function removeNoteLineLimit({ target }: React.MouseEvent<HTMLParagraphElement>) {
     if (target instanceof HTMLParagraphElement) {
-      target.classList.toggle('line-limit');
+      target.classList.remove('line-limit');
 
       const notesContainer = target.closest<HTMLTextAreaElement>('ul');
-      if (!notesContainer) {
-        return;
-      } else if (notesContainer.scrollHeight > notesContainer.clientHeight) {
+      if (notesContainer && notesContainer.scrollHeight > notesContainer.clientHeight) {
         notesContainer.classList.add('scrollbar-padding');
-      } else {
+      }
+    }
+  }
+
+  function addNoteLineLimit({ target }: React.MouseEvent<HTMLParagraphElement>) {
+
+    if (target instanceof HTMLParagraphElement) {
+      target.classList.add('line-limit');
+
+      const notesContainer = target.closest<HTMLTextAreaElement>('ul');
+      if (notesContainer && notesContainer.scrollHeight <= notesContainer.clientHeight) {
         notesContainer.classList.remove('scrollbar-padding');
       }
     }
   }
 
-  // TODO: change button.expand-options onClick attribute to show other buttons
-  // TODO: add handleDeleteNote and handleEditNote buttons.
   return (
     <li>
       <div className='content-container'>
@@ -132,7 +149,10 @@ const NoteComponent: React.FC<NoteComponentProps> = ({
           </div>
         </div>
         <article>
-          <p className={'note-text line-limit'} onClick={toggleNoteLineLimit}>
+          <p
+            className={'note-text line-limit'}
+            onClick={removeNoteLineLimit}
+            onDoubleClick={addNoteLineLimit}>
             {text}
           </p>
           <footer>
