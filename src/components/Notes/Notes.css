@@ -45,7 +45,17 @@ time {
   margin: 0 2rem;
   height: 100%;
   width: calc(100% - 4rem);
-  background-image: linear-gradient(to bottom, white, blue);
+  border-radius: 3px;
+  box-shadow: 0 0 2px #747676;
+  display: grid;
+  place-items: center;
+}
+
+.no-notes-to-show p {
+  color: #707070;
+  font-size: 0.875rem;
+  line-height: 1.357;
+  font-weight: 550;
 }
 
 .content-container {

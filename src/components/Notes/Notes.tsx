@@ -37,7 +37,9 @@ const Notes: React.FC<NotesProps> = ({ noteRecords, onEditNote, onDeleteNote, on
           ))}
         </ul>
       ) : (
-        <div className='no-notes-to-show'>test</div>
+        <div className='no-notes-to-show'>
+          <p>There's nothing here...</p>
+        </div>
       )}
     </React.Fragment>
   );

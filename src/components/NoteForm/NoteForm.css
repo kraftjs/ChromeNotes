@@ -1,6 +1,7 @@
 form {
   box-sizing: border-box;
   border: solid #c2c2d6 2px;
+  border-radius: 4px;
   height: 75%;
 }
 
@@ -14,7 +15,7 @@ textarea {
   padding: 2% 4%;
   outline: none;
   border: solid #c2c2d6 1px;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 textarea.scrollbar-padding {

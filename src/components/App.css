@@ -42,18 +42,20 @@ h1 {
 
 .primary {
   padding: 1em 1.5em;
-  color: #373737;
+  color: #5c5c5c;
   font-weight: 550;
   text-transform: capitalize;
-  border: 0.1rem solid #373737;
-  border-radius: 0.2em;
+  border: 1px solid #999;
+  border-radius: 3px;
   font-size: 0.75rem;
   line-height: 1.2;
   background-color: #fff;
 }
 
 .primary:enabled:hover {
-  box-shadow: 0 0 2px #373737;
+  color: #373737;
+  border-color: #5c5c5c;
+  box-shadow: 0 0 1px #5c5c5c;
 }
 
 .primary:disabled {
@@ -66,7 +68,7 @@ h1 {
   background-color: transparent;
   font-size: 0.75rem;
   line-height: 1.2;
-  color: #373737;
+  color: #5c5c5c;
   font-weight: 550;
 }
 
