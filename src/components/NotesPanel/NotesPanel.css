@@ -12,13 +12,36 @@
 }
 
 .notes-list-wrapper {
-  height: 80%;
+  margin-top: 0.25rem;
+  height: 73%;
 }
 
 #notesPanel > footer {
   flex: 2;
   display: grid;
   place-items: center;
+}
+
+.primary + .secondary {
+  margin-top: 1em;
+}
+
+.url-address-wrapper {
+  position: absolute;
+  max-width: 100%;
+  bottom: 0;
+  left: 0;
+  transition: background-color 500ms steps(1, end);
+}
+
+.url-address {
+  font-size: 0.625rem;
+  color: white;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0.33333em;
+  margin: 0;
 }
 
 .query {

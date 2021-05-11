@@ -37,5 +37,39 @@ h1 {
   text-align: center;
   margin: 0;
   padding: 1rem 0;
-  color: #0f1111;
+  color: #333;
+}
+
+.primary {
+  padding: 1em 1.5em;
+  color: #373737;
+  font-weight: 550;
+  text-transform: capitalize;
+  border: 0.1rem solid #373737;
+  border-radius: 0.2em;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  background-color: #fff;
+}
+
+.primary:enabled:hover {
+  box-shadow: 0 0 2px #373737;
+}
+
+.primary:disabled {
+  opacity: 0.4;
+}
+
+.secondary {
+  padding: 0 0.5em;
+  border: 0;
+  background-color: transparent;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: #373737;
+  font-weight: 550;
+}
+
+.secondary:hover {
+  text-decoration: underline;
 }

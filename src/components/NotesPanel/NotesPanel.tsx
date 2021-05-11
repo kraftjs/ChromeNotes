@@ -23,6 +23,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [notesToDisplay, setNotesToDisplay] = useState<NoteRecord[]>([]);
   const [baseUrlOfCurrentTab, setBaseUrlOfCurrentTab] = useState('');
+  const [hoveredUrl, setHoveredUrl] = useState<string>('');
 
   useEffect(() => {
     if (isValidUrl(url)) {
@@ -45,6 +46,25 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
     const normalizedQuery = target.value.trim().toLowerCase();
     setSearchQuery(normalizedQuery);
   }
+
+  function detectHoveredUrl(url: string) {
+    setHoveredUrl(url);
+  }
+
+  const HoveredUrlAddress: React.FC<{ hoveredUrl: string }> = ({ hoveredUrl }) => {
+    useEffect(() => {
+      const wrapper = document.querySelector<HTMLDivElement>('.url-address-wrapper');
+      if (wrapper) {
+        wrapper.style.backgroundColor = hoveredUrl ? '#747676' : 'initial';
+      }
+    }, [hoveredUrl]);
+
+    return (
+      <div className='url-address-wrapper'>
+        <p className='url-address'>{hoveredUrl}</p>
+      </div>
+    );
+  };
 
   return (
     <section id='notesPanel'>
@@ -69,14 +89,16 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
           noteRecords={notesToDisplay}
           onEditNote={onEditNote}
           onDeleteNote={onDeleteNote}
+          onHoveredUrl={detectHoveredUrl}
         />
       </div>
 
       <footer>
-        <button type='button' onClick={onDraftNewNote}>
+        <button type='button' className='primary' onClick={onDraftNewNote}>
           Create note
         </button>
       </footer>
+      <HoveredUrlAddress hoveredUrl={hoveredUrl} />
     </section>
   );
 };

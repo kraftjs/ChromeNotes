@@ -7,9 +7,10 @@ type NotesProps = {
   noteRecords: NoteRecord[];
   onEditNote: (uuid: UUID, note: Note) => void;
   onDeleteNote: (uuid: UUID) => void;
+  onHoveredUrl: (url: string) => void;
 };
 
-const Notes: React.FC<NotesProps> = ({ noteRecords, onEditNote, onDeleteNote }) => {
+const Notes: React.FC<NotesProps> = ({ noteRecords, onEditNote, onDeleteNote, onHoveredUrl }) => {
   useEffect(() => {
     const notesContainer = document.querySelector<HTMLUListElement>('ul');
     if (notesContainer && notesContainer.scrollHeight > notesContainer.clientHeight) {
@@ -31,6 +32,7 @@ const Notes: React.FC<NotesProps> = ({ noteRecords, onEditNote, onDeleteNote }) 
               note={note}
               handleEditNote={() => onEditNote(uuid, note)}
               handleDeleteNote={() => onDeleteNote(uuid)}
+              handleHoveredUrl={onHoveredUrl}
             />
           ))}
         </ul>
@@ -45,25 +47,16 @@ type NoteComponentProps = {
   note: Note;
   handleEditNote: () => void;
   handleDeleteNote: () => void;
+  handleHoveredUrl: (url: string) => void;
 };
 
 const NoteComponent: React.FC<NoteComponentProps> = ({
   note,
   handleEditNote,
   handleDeleteNote,
+  handleHoveredUrl,
 }) => {
   const { date, text, url } = note;
-
-  // TODO: Replace this implementation with something better
-  useEffect(() => {
-    // Add eventListener to preventDefault highlighting when a section of text is double clicked
-    document.querySelector('.note-text')?.addEventListener('mousedown', (event: Event) => {
-      const detail = (event as UIEvent).detail;
-      if (detail === 2) {
-        event.preventDefault();
-      }
-    }, false)
-  }, [])
 
   function formatUrlDisplay(url: string): string | ReactElement<HTMLAnchorElement> {
     let urlDisplay: string | ReactElement<HTMLAnchorElement>;
@@ -71,7 +64,12 @@ const NoteComponent: React.FC<NoteComponentProps> = ({
       urlDisplay = <p>{url}</p>;
     } else if (url) {
       urlDisplay = (
-        <a href={url} rel='noreferrer noopener' target='_blank'>
+        <a
+          href={url}
+          rel='noreferrer noopener'
+          target='_blank'
+          onMouseEnter={() => handleHoveredUrl(url)}
+          onMouseLeave={() => handleHoveredUrl('')}>
           {url}
         </a>
       );
@@ -91,18 +89,6 @@ const NoteComponent: React.FC<NoteComponentProps> = ({
       const notesContainer = target.closest<HTMLTextAreaElement>('ul');
       if (notesContainer && notesContainer.scrollHeight > notesContainer.clientHeight) {
         notesContainer.classList.add('scrollbar-padding');
-      }
-    }
-  }
-
-  function addNoteLineLimit({ target }: React.MouseEvent<HTMLParagraphElement>) {
-
-    if (target instanceof HTMLParagraphElement) {
-      target.classList.add('line-limit');
-
-      const notesContainer = target.closest<HTMLTextAreaElement>('ul');
-      if (notesContainer && notesContainer.scrollHeight <= notesContainer.clientHeight) {
-        notesContainer.classList.remove('scrollbar-padding');
       }
     }
   }
@@ -149,10 +135,7 @@ const NoteComponent: React.FC<NoteComponentProps> = ({
           </div>
         </div>
         <article>
-          <p
-            className={'note-text line-limit'}
-            onClick={removeNoteLineLimit}
-            onDoubleClick={addNoteLineLimit}>
+          <p className={'note-text line-limit'} onClick={removeNoteLineLimit}>
             {text}
           </p>
           <footer>

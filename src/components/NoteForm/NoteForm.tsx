@@ -70,10 +70,10 @@ const NoteForm: React.FC<NoteFormProps> = ({
         <FormCharacterCount FORM_CHAR_LIMIT={FORM_CHAR_LIMIT} text={text} />
       </label>
       <footer>
-        <button type='submit' disabled={!isValid}>
+        <button type='submit' className='primary' disabled={!isValid}>
           Save note
         </button>
-        <button type='reset' onClick={handleCancelNote}>
+        <button type='reset' className='secondary' onClick={handleCancelNote}>
           Cancel
         </button>
       </footer>
