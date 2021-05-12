@@ -2,13 +2,17 @@
 
 What can it do goes here! Make it sound fun and exciting. Woo!
 
+Find yourself writing post-it notes or using another app to take notes when you're browsing in Chrome? Then the
+ChromeNotes extension is for you! This extension enables users to save, browse, edit, and delete notes from within their
+browser. Notes are sorted by creation date and are filterable by URL. Plus, notes are synced! Just sign
+in with the same Chrome profile across your non-mobile devices, and you'll see them appear.
+
 ### Images:
+![Browser view with ChromeNotes open](ChromeNotesExample__FullScreen.png)
 
-Frame 1 should be a view of all notes
-
-Frame 2 should be a view of creating a new note
-
-Frame 3 should be a view of filtering the notes
+![View of empty storage](ChromeNotesExample__Empty.png)
+![View of all notes](ChromeNotesExample__Notes.png)
+![View of creating a note](ChromeNotesExample__CreateNote.png)
 
 ### Prerequisites to run locally:
 
