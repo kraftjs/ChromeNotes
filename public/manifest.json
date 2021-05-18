@@ -1,6 +1,6 @@
 {
-  "name": "ChromeNotes",
-  "description": "Notes for Chrome!",
+  "name": "Notes for Chrome",
+  "description": "Create, browse, edit and delete notes that sync across your Google account!",
   "version": "0.0.1",
   "manifest_version": 3,
   "icons": {
@@ -8,7 +8,10 @@
     "32": "icon32.png",
     "128": "icon128.png"
   },
-  "permissions": ["storage", "tabs"],
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -21,7 +24,7 @@
         "default": "Ctrl+Shift+F",
         "mac": "Alt+Shift+F"
       },
-      "description": "Toggle domain-specific notes"
+      "description": "Open/close extension window"
     }
   }
 }

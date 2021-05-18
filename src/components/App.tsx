@@ -88,7 +88,7 @@ const App: React.FC = () => {
   return (
     <React.Fragment>
       <header>
-        <h1>ChromeNotes</h1>
+        <h1>Notes for Chrome</h1>
       </header>
 
       <main>

@@ -4,7 +4,7 @@ import isValidUrl from './lib/url-validator';
 chrome.runtime.onInstalled.addListener(() => {
   chrome.runtime.getPlatformInfo((platformInfo) => {
     const variableKey = platformInfo.os === 'mac' ? 'Alt' : 'Ctrl';
-    const title = `ChromeNotes:\n${variableKey}+Shift+F to open extension.`;
+    const title = `Notes for Chrome:\n${variableKey}+Shift+F to open extension.`;
     chrome.action.setTitle({ title });
   });
 });
